@@ -1,8 +1,13 @@
-import type { NextPage } from 'next'
-
+import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
-  return <h1 className="text-3xl underline">Hello world!</h1>;
-}
+  const hello = 'hello';
 
-export default Home
+  if (hello === 'hello') { 
+    return <div>HEllo</div>;
+  }
+  
+  return <h1 className='text-3xl underline'>Hello world!</h1>;
+};
+
+export default Home;
