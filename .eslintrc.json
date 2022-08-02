@@ -1,12 +1,14 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jest/globals": true
     },
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@next/next/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -18,7 +20,8 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "jest"
     ],
     "rules": {
       "quotes": ["error", "single"],
@@ -37,9 +40,14 @@
       "space-before-function-paren": ["error", "never"],
       "switch-colon-spacing": ["error"],
       "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
-      "object-curly-newline": ["error", {"multiline": true}],
+      "object-curly-newline": ["error", "always"],
       "arrow-body-style": ["error", "always"],
       "no-else-return": ["error", {"allowElseIf": false}],
-      "react/react-in-jsx-scope": "off"
+      "react/react-in-jsx-scope": "off",
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error"
     }
 }
