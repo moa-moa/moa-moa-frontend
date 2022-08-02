@@ -40,7 +40,6 @@
       "space-before-function-paren": ["error", "never"],
       "switch-colon-spacing": ["error"],
       "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
-      "object-curly-newline": ["error", "always"],
       "arrow-body-style": ["error", "always"],
       "no-else-return": ["error", {"allowElseIf": false}],
       "react/react-in-jsx-scope": "off",
