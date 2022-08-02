@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  eslint: {
+    dirs: ['./components', './pages', './__tests__']
+  }
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
