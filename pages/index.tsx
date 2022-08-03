@@ -4,7 +4,7 @@ const Home: NextPage = () => {
   const hello = 'hello';
 
   if (hello === 'hello') { 
-    return <div>HEllo</div>;
+    return <div>HEllO</div>;
   }
   
   return <h1 className='text-3xl underline'>Hello world!</h1>;
