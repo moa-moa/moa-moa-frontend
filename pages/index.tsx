@@ -1,12 +1,8 @@
 import type { NextPage } from 'next';
-import Layout from '@/components/templates/layouts';
+import Pages from '@/components/pages';
 
 const Home: NextPage = () => {
-  return (
-    <Layout.Nested>
-      <h1 className='text-3xl underline'>Hello world!</h1>
-    </Layout.Nested>
-  );
+  return <Pages.Home />;
 };
 
 export default Home;
