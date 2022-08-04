@@ -23,7 +23,7 @@ export default function Gnb() {
   ];
 
   return (
-    <nav>
+    <nav className='max-w-7xl mx-auto w-full h-full'>
       <ul className='flex'>
         {buttons.map((button) => {
           return <GnbItem key={button.id} {...button} />;
