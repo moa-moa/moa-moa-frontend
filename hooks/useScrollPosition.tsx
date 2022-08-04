@@ -8,10 +8,10 @@ interface ScrollPosition {
 let timer: any = null;
 const INITIAL_STATE = {
   scrollX: 0,
-  scrollY: 0,
+  scrollY: 0
 };
 
-export function useScrollPosition(): ScrollPosition | null {
+export function useScrollPosition(): ScrollPosition {
   if (typeof window === 'undefined') {
     return INITIAL_STATE;
   }
