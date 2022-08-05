@@ -1,52 +1,49 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "jest/globals": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest/globals": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@next/next/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@next/next/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react",
-        "@typescript-eslint",
-        "jest"
-    ],
-    "rules": {
-      "quotes": ["error", "single"],
-      "indent": ["error", 2],
-      "jsx-quotes": ["error", "prefer-single"],
-      "block-spacing": ["error"],
-      "semi": ["error", "always"],
-      "semi-spacing": ["error"],
-      "space-infix-ops": "error",
-      "curly": ["error"],
-      "comma-spacing": ["error", {"before": false, "after": true}],
-      "comma-style": ["error", "last"],
-      "comma-dangle": ["error", "never"],
-      "rest-spread-spacing": ["error", "never"],
-      "keyword-spacing": ["error", {"before": true, "after": true}],
-      "space-before-function-paren": ["error", "never"],
-      "switch-colon-spacing": ["error"],
-      "key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
-      "arrow-body-style": ["error", "always"],
-      "no-else-return": ["error", {"allowElseIf": false}],
-      "react/react-in-jsx-scope": "off",
-      "jest/no-disabled-tests": "warn",
-      "jest/no-focused-tests": "error",
-      "jest/no-identical-title": "error",
-      "jest/prefer-to-have-length": "warn",
-      "jest/valid-expect": "error"
-    }
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "jest", "prettier"],
+  "rules": {
+    "quotes": ["error", "single"],
+    "indent": ["error", 2],
+    "jsx-quotes": ["error", "prefer-single"],
+    "block-spacing": ["error"],
+    "semi": ["error", "always"],
+    "semi-spacing": ["error"],
+    "space-infix-ops": "error",
+    "curly": ["error"],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "comma-style": ["error", "last"],
+    "comma-dangle": ["error", "never"],
+    "rest-spread-spacing": ["error", "never"],
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "switch-colon-spacing": ["error"],
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "no-else-return": ["error", { "allowElseIf": false }],
+    "react/react-in-jsx-scope": "off",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "prettier/prettier": "error"
+  }
 }
