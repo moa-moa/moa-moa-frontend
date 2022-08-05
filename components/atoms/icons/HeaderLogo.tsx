@@ -6,8 +6,7 @@ export default function HeaderLogo() {
         height='20'
         viewBox='0 0 122 20'
         fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-      >
+        xmlns='http://www.w3.org/2000/svg'>
         <g clipPath='url(#clip0_1579_789)'>
           <path
             d='M49.1816 20C51.9124 20 54.0662 18.6923 55.0662 16.3462V19.5H60.3739V10.1923C60.3739 3.96154 56.2201 0 50.2585 0C44.2201 0 39.9893 4.11539 39.9893 10.2308C39.9893 16.8462 44.9509 20 49.1816 20Z'
