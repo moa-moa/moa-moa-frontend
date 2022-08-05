@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
+import { ReactNode } from 'react';
 
 export interface ILayoutProps {
-  children: ReactElement;
+  children: ReactNode;
 }
