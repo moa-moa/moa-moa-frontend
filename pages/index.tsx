@@ -1,13 +1,8 @@
 import type { NextPage } from 'next';
+import Pages from '@/components/pages';
 
 const Home: NextPage = () => {
-  const hello = 'hello';
-
-  if (hello === 'hello') { 
-    return <div>HEllo</div>;
-  }
-  
-  return <h1 className='text-3xl underline'>Hello world!</h1>;
+  return <Pages.Home />;
 };
 
 export default Home;
