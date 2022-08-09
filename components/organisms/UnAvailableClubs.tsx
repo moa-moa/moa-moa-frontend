@@ -5,7 +5,9 @@ export default function UnAvailableClubs() {
   const clubs = getClubs();
   return (
     <section>
-      <h1 className='text-default-black font-bold text-base'>종료된 모임</h1>
+      <h1 className='text-default-black font-bold text-base mb-2.5'>
+        종료된 모임
+      </h1>
       <Molecules.ClubList clubs={clubs} />
     </section>
   );

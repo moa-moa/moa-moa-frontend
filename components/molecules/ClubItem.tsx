@@ -11,13 +11,14 @@ export default function ClubItem({
   category,
   max,
   title,
+  isAvailable,
   userJoinedClub
 }: IClub) {
-  const badges = getBadges(owner, category);
+  const badges = getBadges(owner, isAvailable, category);
 
   return (
     <li>
-      <Link href={`/club/${id}`}>
+      <Link href={isAvailable ? `/club/${id}` : 'javascript:void(0)'}>
         <a className='block p-5 bg-light-gray rounded-[0.3125rem]'>
           <div className='flex items-center mb-2'>
             <div className='flex gap-[0.3125rem] mr-2.5'>
@@ -32,7 +33,11 @@ export default function ClubItem({
                   <li
                     key={'joinUser-' + user.id}
                     className={index ? '-ml-1' : ''}>
-                    <Atom.Avatar name={user.name} image={user.image} />
+                    <Atom.Avatar
+                      name={user.name}
+                      image={user.image}
+                      isAvailable={isAvailable}
+                    />
                   </li>
                 );
               })}
@@ -49,7 +54,12 @@ export default function ClubItem({
           </div>
 
           <div>
-            <h2 className='font-bold text-base'>{title}</h2>
+            <h2
+              className={
+                'font-bold text-base' + (isAvailable ? '' : ' text-gray')
+              }>
+              {title}
+            </h2>
           </div>
         </a>
       </Link>
@@ -57,19 +67,25 @@ export default function ClubItem({
   );
 }
 
-function getBadges(owner: string, category: ICategory): BadgeType[] {
+function getBadges(
+  owner: string,
+  isAvailable: boolean,
+  category: ICategory
+): BadgeType[] {
   return [
     {
       id: 'badge-1',
       type: 'category-of-club',
-      backColor: category.backColor,
-      text: category.name
+      backColor: isAvailable ? category.backColor : '#CCCCCC',
+      text: category.name,
+      isAvailable
     },
     {
       id: 'badge-2',
       type: 'person',
-      backColor: '#aaaaaa',
-      text: owner
+      backColor: isAvailable ? '#aaaaaa' : '#CCCCCC',
+      text: owner,
+      isAvailable
     }
   ];
 }

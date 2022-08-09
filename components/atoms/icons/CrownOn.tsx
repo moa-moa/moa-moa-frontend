@@ -1,4 +1,4 @@
-export default function Crown() {
+export default function CrownOn() {
   return (
     <svg
       width='19'

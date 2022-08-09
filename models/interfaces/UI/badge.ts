@@ -3,6 +3,7 @@ export interface ICategoryBadge {
   type: 'category';
   backColor: string;
   text: string;
+  isAvailable?: boolean;
 }
 
 export interface ICategoryOfClubBadge {
@@ -10,6 +11,7 @@ export interface ICategoryOfClubBadge {
   type: 'category-of-club';
   backColor: string;
   text: string;
+  isAvailable?: boolean;
 }
 
 export interface ICreatorBadge {
@@ -17,4 +19,5 @@ export interface ICreatorBadge {
   type: 'person';
   backColor: string;
   text: string;
+  isAvailable?: boolean;
 }
