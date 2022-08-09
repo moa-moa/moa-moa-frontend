@@ -3,11 +3,19 @@ import HomeOff from './HomeOff';
 import HomeOn from './HomeOn';
 import MyPageOff from './MyPageOff';
 import MyPageOn from './MyPageOn';
+import People from './People';
+import CrownOn from './CrownOn';
+import CrownOff from './CrownOff';
+import Plus from './Plus';
 
 export default {
   HeaderLogo,
   HomeOff,
   HomeOn,
   MyPageOff,
-  MyPageOn
+  MyPageOn,
+  CrownOn,
+  CrownOff,
+  People,
+  Plus
 };

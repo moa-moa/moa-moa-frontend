@@ -1,9 +1,16 @@
 import Layout from '@/components/templates/layouts';
+import Organisms from '../organisms';
+import Atoms from '../atoms';
 
 export default function Home() {
   return (
     <Layout.Nested>
-      <h1 className='text-3xl underline'>Hello world!</h1>
+      <Organisms.TabCategories />
+      <section className='px-4'>
+        <Organisms.AvailableClubs />
+        <Organisms.UnAvailableClubs />
+      </section>
+      <Atoms.CreateClubButton />
     </Layout.Nested>
   );
 }
