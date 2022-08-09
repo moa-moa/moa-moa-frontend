@@ -11,6 +11,7 @@ module.exports = {
         nav: '3.125rem'
       },
       colors: {
+        'default-black': '#1c1c1c',
         'default-gray': '#AAAAAA',
         'light-gray': '#F8F8F8',
         lunch: '#F178B6',
