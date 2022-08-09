@@ -97,7 +97,7 @@ export default function TabCategories() {
   };
 
   return (
-    <nav id='navHeader' className='w-full'>
+    <nav id='navHeader' className='w-full mb-6'>
       <ul
         ref={scrollEl}
         className='w-full flex gap-1.5 overflow-x-auto px-4 scrollbar-hide'
