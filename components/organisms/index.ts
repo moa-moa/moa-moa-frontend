@@ -1,11 +1,13 @@
 import Header from './Header';
 import Footer from './Footer';
 import TabCategories from './TabCategories';
-import ClubList from './ClubList';
+import AvailableClubs from './AvailableClubs';
+import UnAvailableClubs from './UnAvailableClubs';
 
 export default {
   Header,
   Footer,
   TabCategories,
-  ClubList
+  AvailableClubs,
+  UnAvailableClubs
 };
