@@ -5,7 +5,11 @@ export default function Home() {
   return (
     <Layout.Nested>
       <Organisms.TabCategories />
-      <h1 className='text-3xl underline'>Hello world!</h1>
+      <section className='px-4'>
+        <section>
+          <Organisms.ClubList />
+        </section>
+      </section>
     </Layout.Nested>
   );
 }
