@@ -2,7 +2,8 @@ import {
   MouseEvent as ReactMouseEvent,
   useRef,
   useCallback,
-  useLayoutEffect
+  useLayoutEffect,
+  useEffect
 } from 'react';
 
 interface Position {
@@ -29,10 +30,17 @@ export default function TabCategories() {
     '독서(0)',
     '기타(0)'
   ];
+  const canUseDOM = !!(
+    typeof window !== 'undefined' &&
+    typeof window.document !== 'undefined' &&
+    typeof window.document.createElement !== 'undefined'
+  );
+
+  const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
 
   const scrollEl = useRef<HTMLUListElement | null>(null);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     scrollEl.current?.addEventListener('wheel', onMouseWheel, {
       passive: false
     });
