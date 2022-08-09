@@ -1,5 +1,6 @@
 import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
+import Atoms from '../atoms';
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
         <Organisms.AvailableClubs />
         <Organisms.UnAvailableClubs />
       </section>
+      <Atoms.CreateClubButton />
     </Layout.Nested>
   );
 }
