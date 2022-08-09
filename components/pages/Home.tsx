@@ -6,9 +6,8 @@ export default function Home() {
     <Layout.Nested>
       <Organisms.TabCategories />
       <section className='px-4'>
-        <section>
-          <Organisms.ClubList />
-        </section>
+        <Organisms.AvailableClubs />
+        <Organisms.UnAvailableClubs />
       </section>
     </Layout.Nested>
   );
