@@ -10,7 +10,9 @@ export default function Nested({ children }: ILayoutProps) {
   return (
     <section className='min-h-screen flex flex-col'>
       <Header scrollY={scrollY} />
-      <main className='flex-1'>{children}</main>
+      <main className='flex-1 mt-[0.1rem] max-w-5xl w-full mx-auto'>
+        {children}
+      </main>
       <Footer />
     </section>
   );
