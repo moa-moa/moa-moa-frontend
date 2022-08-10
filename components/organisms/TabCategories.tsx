@@ -12,13 +12,17 @@ interface Position {
   scrollY: number;
 }
 
+interface Props {
+  type?: 'slide' | 'wrap';
+}
+
 const position: Position = {
   scrollLeft: 0,
   clientX: 0,
   scrollY: 0
 };
 
-export default function TabCategories() {
+export default function TabCategories({ type }: Props) {
   const categories = [
     '전체(7)',
     '점심(3)',
@@ -35,6 +39,8 @@ export default function TabCategories() {
     typeof window.document !== 'undefined' &&
     typeof window.document.createElement !== 'undefined'
   );
+  const uiType = type || 'slide';
+  const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
 
   const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
 
@@ -108,7 +114,9 @@ export default function TabCategories() {
     <nav id='navHeader' className='w-full mb-6'>
       <ul
         ref={scrollEl}
-        className='w-full flex gap-1.5 overflow-x-auto px-4 scrollbar-hide'
+        className={
+          'w-full flex gap-1.5 overflow-x-auto px-4 scrollbar-hide' + wrapStyle
+        }
         onMouseDown={onMouseDownHandler}>
         {categories.map((category) => {
           return (
