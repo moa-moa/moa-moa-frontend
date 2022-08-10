@@ -7,6 +7,7 @@ import People from './People';
 import CrownOn from './CrownOn';
 import CrownOff from './CrownOff';
 import Plus from './Plus';
+import Close from './Close';
 
 export default {
   HeaderLogo,
@@ -17,5 +18,6 @@ export default {
   CrownOn,
   CrownOff,
   People,
-  Plus
+  Plus,
+  Close
 };
