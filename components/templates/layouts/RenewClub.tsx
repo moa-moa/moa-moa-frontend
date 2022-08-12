@@ -12,7 +12,6 @@ export default function RenewClub({ children }: Props) {
       <main className='flex-1 mt-[0.1rem] max-w-5xl w-full mx-auto'>
         {children}
       </main>
-      <footer>footer</footer>
     </section>
   );
 }
