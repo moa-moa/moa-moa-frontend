@@ -2,6 +2,7 @@ import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
+import Icons from '../atoms/icons';
 
 export default function RenewClub() {
   const {
@@ -18,8 +19,8 @@ export default function RenewClub() {
   return (
     <Layout.RenewClub>
       <Organisms.TabCategories type='wrap' />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <section className='form-group'>
+      <form onSubmit={handleSubmit(onSubmit)} className='px-4'>
+        <section className='form-group mb-2.5'>
           <input
             type='text'
             className='border border-border-gray p-3.5 w-full text-base text-[#222222] rounded-[0.3125rem] focus:outline-none focus:bg-[#FDF4F6] focus:caret-[#ee2554]'
@@ -28,33 +29,54 @@ export default function RenewClub() {
           />
         </section>
 
-        <section className='form-group'>
+        <section className='form-group mb-2.5 h-44'>
           <textarea
-            className='border border-border-gray p-3.5 w-full resize-none h-44 text-base text-[#222222] rounded-[0.3125rem] focus:outline-none focus:bg-[#FDF4F6] focus:caret-[#ee2554]'
+            className='border border-border-gray p-3.5 w-full resize-none h-full text-base text-[#222222] rounded-[0.3125rem] focus:outline-none focus:bg-[#FDF4F6] focus:caret-[#ee2554]'
             {...register('description')}
             placeholder='클럽 부가 설명을 입력해주세요.'
           />
         </section>
 
-        <section className='form-group'>
-          <div>
-            <button type='button'>인원 제한 없음</button>
+        <section className='form-group flex justify-center items-center gap-2 mb-5'>
+          <div className='flex-1 h-nav border border-border-gray rounded-[0.3125rem] text-gray'>
+            <button
+              type='button'
+              className='w-full h-full flex justify-center items-center gap-[0.3125rem]'>
+              <Icons.TCheckOff />
+              <span className='text-base'>인원 제한 없음</span>
+            </button>
           </div>
-          <div>
+          <div className='flex-1 flex justify-center items-center h-nav text-base text-gray border border-border-gray rounded-[0.3125rem]'>
             <div>최대</div>
-            <button type='button'>마이너스</button>
-            <div>명</div>
-            <button type='button'>플러스</button>
+            <button type='button'>
+              <Icons.TMinusOff />
+            </button>
+            <div>4명</div>
+            <button type='button'>
+              <Icons.TPlusOff />
+            </button>
           </div>
         </section>
 
         <section className='form-group'>
-          <div>
-            <h6>사진 업로드</h6>
-            <div>(선택, 최대 10장)</div>
+          <div className='flex items-end mb-2.5'>
+            <h6 className='text-sm font-bold mr-1'>사진 업로드</h6>
+            <div className='text-xs text-gray leading-[1.2rem]'>
+              (선택, 최대 10장)
+            </div>
           </div>
-          <div>
-            <section></section>
+          <div className='grid md:grid-cols-5 sm:grid-cols-4 grid-cols-3 gap-x-2 gap-y-2.5'>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
           </div>
         </section>
 
