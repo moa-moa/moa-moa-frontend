@@ -1,19 +1,43 @@
 import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
 import { useForm } from 'react-hook-form';
-import { useCallback } from 'react';
+import { useCallback, useLayoutEffect, useEffect } from 'react';
 import Icons from '../atoms/icons';
+
+interface NestedValues {
+  title: string;
+  description: string;
+  max: number;
+}
+
+const defaultValues: NestedValues = {
+  title: '',
+  description: '',
+  max: Infinity
+};
 
 export default function RenewClub() {
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors }
-  } = useForm();
+  } = useForm({ defaultValues });
 
-  const onSubmit = useCallback(() => {
-    console.log('on Submit');
+  const canUseDOM = !!(
+    typeof window !== 'undefined' &&
+    typeof window.document !== 'undefined' &&
+    typeof window.document.createElement !== 'undefined'
+  );
+  const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
+
+  useIsomorphicLayoutEffect(() => {
+    register('max', { required: true, min: 1, max: Infinity });
+  }, []);
+
+  const onSubmit = useCallback((data: any) => {
+    console.log(data);
   }, []);
 
   return (
@@ -24,7 +48,7 @@ export default function RenewClub() {
           <input
             type='text'
             className='border border-border-gray p-3.5 w-full text-base text-[#222222] rounded-[0.3125rem] focus:outline-none focus:bg-[#FDF4F6] focus:caret-[#ee2554]'
-            {...register('title')}
+            {...register('title', { required: true })}
             placeholder='클럽 제목을 입력해주세요.'
           />
         </section>
@@ -32,7 +56,7 @@ export default function RenewClub() {
         <section className='form-group mb-2.5 h-44'>
           <textarea
             className='border border-border-gray p-3.5 w-full resize-none h-full text-base text-[#222222] rounded-[0.3125rem] focus:outline-none focus:bg-[#FDF4F6] focus:caret-[#ee2554]'
-            {...register('description')}
+            {...register('description', { required: true })}
             placeholder='클럽 부가 설명을 입력해주세요.'
           />
         </section>
