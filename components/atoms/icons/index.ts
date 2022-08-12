@@ -8,6 +8,8 @@ import CrownOn from './CrownOn';
 import CrownOff from './CrownOff';
 import Plus from './Plus';
 import Close from './Close';
+import TCheckOn from './TCheckOn';
+import TCheckOff from './TCheckOff';
 
 export default {
   HeaderLogo,
@@ -19,5 +21,7 @@ export default {
   CrownOff,
   People,
   Plus,
-  Close
+  Close,
+  TCheckOn,
+  TCheckOff
 };
