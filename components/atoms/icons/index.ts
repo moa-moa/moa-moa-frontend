@@ -8,6 +8,10 @@ import CrownOn from './CrownOn';
 import CrownOff from './CrownOff';
 import Plus from './Plus';
 import Close from './Close';
+import TPlusOn from './TPlusOn';
+import TPlusOff from './TPlusOff';
+import TMinusOn from './TMinusOn';
+import TMinusOff from './TMinusOff';
 import TCheckOn from './TCheckOn';
 import TCheckOff from './TCheckOff';
 
@@ -22,6 +26,10 @@ export default {
   People,
   Plus,
   Close,
+  TPlusOn,
+  TPlusOff,
+  TMinusOn,
+  TMinusOff,
   TCheckOn,
   TCheckOff
 };
