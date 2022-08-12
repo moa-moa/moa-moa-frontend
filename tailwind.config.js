@@ -17,7 +17,8 @@ module.exports = {
         'border-gray': '#DDDDDD',
         disabled: '#EEEEEE',
         lunch: '#F178B6',
-        gray: '#999999'
+        gray: '#999999',
+        'moa-pink': '#ee2554'
       }
     }
   },
