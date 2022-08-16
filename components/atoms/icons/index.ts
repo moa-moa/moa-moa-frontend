@@ -15,6 +15,7 @@ import TMinusOff from './TMinusOff';
 import TCheckOn from './TCheckOn';
 import TCheckOff from './TCheckOff';
 import WClose from './WClose';
+import Move from './Move';
 
 export default {
   HeaderLogo,
@@ -33,5 +34,6 @@ export default {
   TMinusOff,
   TCheckOn,
   TCheckOff,
-  WClose
+  WClose,
+  Move
 };

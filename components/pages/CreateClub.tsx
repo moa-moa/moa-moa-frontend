@@ -1,7 +1,13 @@
 import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
 import { useForm } from 'react-hook-form';
-import { useCallback, useLayoutEffect, useEffect } from 'react';
+import {
+  useCallback,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+  DragEvent
+} from 'react';
 import Icons from '../atoms/icons';
 
 interface NestedValues {
@@ -24,6 +30,18 @@ export default function RenewClub() {
     reset,
     formState: { errors }
   } = useForm({ defaultValues });
+  const dragged: any = useRef({
+    desktop: {
+      doing: false,
+      el: null,
+      index: null
+    },
+    mobile: {
+      doing: false,
+      el: null,
+      index: null
+    }
+  });
 
   const canUseDOM = !!(
     typeof window !== 'undefined' &&
@@ -34,6 +52,113 @@ export default function RenewClub() {
 
   useIsomorphicLayoutEffect(() => {
     register('max', { required: true, min: 1, max: Infinity });
+  }, []);
+
+  const setDragSortableEvents = () => {
+    // console.log(document.querySelectorAll('.club-image'));
+    // console.log(document.querySelectorAll());
+  };
+
+  const onDragStart = useCallback((event: DragEvent) => {
+    const currentTarget = event.currentTarget! as HTMLElement;
+    const index = currentTarget.getAttribute('data-index');
+
+    currentTarget.classList!.add('drag--moving');
+
+    dragged.current.desktop.doing = true;
+    dragged.current.desktop.el = currentTarget;
+    dragged.current.desktop.index = index;
+  }, []);
+
+  const onDragOver = useCallback((event: DragEvent) => {
+    event.preventDefault();
+
+    if (!dragged.current.desktop.doing) {
+      return;
+    }
+
+    let waiting = false;
+
+    return (function () {
+      if (!waiting) {
+        waiting = true;
+
+        const currentTarget = event.currentTarget!;
+        const index = currentTarget.getAttribute('data-index');
+
+        if (dragged.current.desktop.index !== index) {
+          if (!currentTarget.className.includes('drag--hover')) {
+            currentTarget.classList.add('drag--hover');
+          }
+        }
+
+        setTimeout(() => {
+          waiting = false;
+        }, 250);
+      }
+    })();
+  }, []);
+
+  const onDragLeave = useCallback((event: DragEvent) => {
+    if (!dragged.current.desktop.doing) {
+      return;
+    }
+
+    const currentTarget = event.currentTarget!;
+    if (currentTarget.className.includes('drag--hover')) {
+      currentTarget.classList.remove('drag--hover');
+    }
+  }, []);
+
+  const onDragEnd = useCallback((event: DragEvent) => {
+    event.preventDefault();
+
+    if (!dragged.current.desktop.doing) {
+      return;
+    }
+
+    const images = document.querySelectorAll('.club-image');
+    images.forEach((image) => {
+      image.classList.remove('drag--hover');
+      image.classList.remove('drag--moving');
+    });
+
+    dragged.current.desktop.doing = null;
+    dragged.current.desktop.el = null;
+    dragged.current.desktop.index = null;
+  }, []);
+
+  const onDrop = useCallback((event: DragEvent) => {
+    if (!dragged.current.desktop.doing) {
+      return;
+    }
+
+    const currentTarget = event.currentTarget!;
+    const droppedIndex = Number(currentTarget.getAttribute('data-index'));
+    const draggedIndex = Number(dragged.current.desktop.index!);
+    const isLast = currentTarget.getAttribute('data-is-last-index');
+
+    if (draggedIndex !== droppedIndex) {
+      let originalPlace: HTMLElement | null = null;
+
+      if (dragged.current.desktop.el.nextSibling) {
+        originalPlace = dragged.current.desktop.el.nextSibling;
+      } else {
+        originalPlace = dragged.current.desktop.el.previousSibling;
+      }
+
+      if (draggedIndex > droppedIndex) {
+        currentTarget.before(dragged.current.desktop.el);
+      } else {
+        currentTarget.after(dragged.current.desktop.el);
+      }
+
+      if (isLast) {
+        originalPlace!.after(currentTarget);
+      } else {
+        originalPlace!.before(currentTarget);
+      }
+    }
   }, []);
 
   const onSubmit = useCallback((data: any) => {
@@ -90,17 +215,33 @@ export default function RenewClub() {
             </div>
           </div>
           <div className='grid md:grid-cols-5 sm:grid-cols-4 grid-cols-3 gap-x-2 gap-y-2.5'>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
-            <section className='w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem]'></section>
+            {Array.from({ length: 10 }, (_, index) => index + 1).map(
+              (data, index, total) => (
+                <section
+                  key={data}
+                  className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center'
+                  draggable='true'
+                  data-index={index}
+                  data-is-last-index={index === total.length - 1}
+                  onDragStart={onDragStart}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onDragEnd={onDragEnd}
+                  onDrop={onDrop}>
+                  <button
+                    type='button'
+                    className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'>
+                    <Icons.WClose />
+                  </button>
+                  <button
+                    type='button'
+                    className='w-8 h-8 rounded-full bg-gray flex justify-center items-center absolute right-7 -top-2'>
+                    <Icons.Move />
+                  </button>
+                  <div>{index}</div>
+                </section>
+              )
+            )}
           </div>
         </section>
 
