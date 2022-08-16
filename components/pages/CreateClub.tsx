@@ -95,10 +95,7 @@ export default function RenewClub() {
             const index = getIndexFromImages(currentTarget);
             const draggedIndex = dragged.current.mobile.index;
 
-            const images = document.querySelectorAll('.club-image');
-            images.forEach((image) => {
-              image.classList.remove('drag--hover');
-            });
+            removeClassFromImages('drag--hover');
 
             if (index !== draggedIndex) {
               if (!currentTarget.className.includes('drag--hover')) {
@@ -151,11 +148,7 @@ export default function RenewClub() {
         }
       }
 
-      const images = document.querySelectorAll('.club-image');
-      images.forEach((image) => {
-        image.classList.remove('drag--hover');
-        image.classList.remove('drag--moving');
-      });
+      removeClassFromImages('all');
 
       dragged.current.mobile.doing = false;
     }
@@ -221,10 +214,7 @@ export default function RenewClub() {
 
           if (dragged.current.desktop.index !== index) {
             if (!currentTarget.className.includes('drag--hover')) {
-              const images = document.querySelectorAll('.club-image');
-              images.forEach((image) => {
-                image.classList.remove('drag--hover');
-              });
+              removeClassFromImages('drag--hover');
 
               currentTarget.classList.add('drag--hover');
             }
@@ -245,11 +235,7 @@ export default function RenewClub() {
       return;
     }
 
-    const images = document.querySelectorAll('.club-image');
-    images.forEach((image) => {
-      image.classList.remove('drag--hover');
-      image.classList.remove('drag--moving');
-    });
+    removeClassFromImages('all');
 
     dragged.current.desktop.doing = null;
     dragged.current.desktop.el = null;
@@ -299,6 +285,25 @@ export default function RenewClub() {
     const images = document.querySelectorAll('.club-image')!;
     return Array.from(images).indexOf(currentTarget);
   }, []);
+
+  const removeClassFromImages = useCallback(
+    (target: 'drag--hover' | 'drag--moving' | 'all') => {
+      const images = document.querySelectorAll('.club-image');
+      images.forEach((image) => {
+        if (target === 'drag--hover') {
+          image.classList.remove('drag--hover');
+        } else {
+          if (target === 'drag--moving') {
+            image.classList.remove('drag--moving');
+          } else {
+            image.classList.remove('drag--hover');
+            image.classList.remove('drag--moving');
+          }
+        }
+      });
+    },
+    []
+  );
 
   const onSubmit = useCallback((data: any) => {
     console.log(data);
