@@ -69,7 +69,7 @@ export default function RenewClub() {
 
   const onTouchStart = useCallback((event: TouchEvent) => {
     const currentTarget = event.currentTarget.parentNode! as HTMLElement;
-    const index = currentTarget.getAttribute('data-index');
+    const index = getIndexFromImages(currentTarget);
 
     currentTarget.classList.add('drag--moving');
 
@@ -89,10 +89,10 @@ export default function RenewClub() {
           const { clientX, clientY } = event.changedTouches[0];
           const currentTarget = (
             document.elementFromPoint(clientX, clientY) as HTMLElement
-          ).closest('.club-image');
+          ).closest('.club-image') as HTMLElement;
 
           if (currentTarget) {
-            const index = currentTarget!.getAttribute('data-index');
+            const index = getIndexFromImages(currentTarget);
             const draggedIndex = dragged.current.mobile.index;
 
             const images = document.querySelectorAll('.club-image');
@@ -120,10 +120,10 @@ export default function RenewClub() {
       const { clientX, clientY } = event.changedTouches[0];
       const currentTarget = (
         document.elementFromPoint(clientX, clientY) as HTMLElement
-      ).closest('.club-image');
+      ).closest('.club-image') as HTMLElement;
 
       if (currentTarget) {
-        const droppedIndex = Number(currentTarget.getAttribute('data-index'));
+        const droppedIndex = getIndexFromImages(currentTarget);
         const draggedIndex = Number(dragged.current.mobile.index!);
         let isLast = false;
 
@@ -188,7 +188,7 @@ export default function RenewClub() {
   const onDragStart = useCallback((event: DragEvent) => {
     if (dragged.current.desktop.doing) {
       const currentTarget = event.currentTarget! as HTMLElement;
-      const index = currentTarget.getAttribute('data-index');
+      const index = getIndexFromImages(currentTarget);
 
       currentTarget.classList!.add('drag--moving');
 
@@ -210,38 +210,28 @@ export default function RenewClub() {
       if (!waiting) {
         waiting = true;
 
-        const currentTarget = event.currentTarget!;
-        const index = currentTarget.getAttribute('data-index');
+        const targetFromPoint = document.elementFromPoint(
+          event.clientX,
+          event.clientY
+        ) as HTMLElement;
+        const currentTarget = targetFromPoint.closest('.club-image');
 
-        if (dragged.current.desktop.index !== index) {
-          if (!currentTarget.className.includes('drag--hover')) {
-            currentTarget.classList.add('drag--hover');
+        if (currentTarget) {
+          const index = getIndexFromImages(currentTarget as HTMLElement);
+
+          if (dragged.current.desktop.index !== index) {
+            if (!currentTarget.className.includes('drag--hover')) {
+              const images = document.querySelectorAll('.club-image');
+              images.forEach((image) => {
+                image.classList.remove('drag--hover');
+              });
+
+              currentTarget.classList.add('drag--hover');
+            }
           }
         }
       }
 
-      setTimeout(() => {
-        waiting = false;
-      }, 250);
-    })();
-  }, []);
-
-  const onDragLeave = useCallback((event: DragEvent) => {
-    if (!dragged.current.desktop.doing) {
-      return;
-    }
-
-    let waiting = false;
-
-    return (function () {
-      if (!waiting) {
-        waiting = true;
-
-        const currentTarget = event.currentTarget!;
-        if (currentTarget.className.includes('drag--hover')) {
-          currentTarget.classList.remove('drag--hover');
-        }
-      }
       setTimeout(() => {
         waiting = false;
       }, 250);
@@ -276,8 +266,8 @@ export default function RenewClub() {
       event.stopPropagation();
     }
 
-    const currentTarget = event.currentTarget!;
-    const droppedIndex = Number(currentTarget.getAttribute('data-index'));
+    const currentTarget = event.currentTarget! as HTMLElement;
+    const droppedIndex = getIndexFromImages(currentTarget);
     const draggedIndex = Number(dragged.current.desktop.index!);
     let isLast = false;
 
@@ -303,6 +293,11 @@ export default function RenewClub() {
         originalPlace!.before(currentTarget);
       }
     }
+  }, []);
+
+  const getIndexFromImages = useCallback((currentTarget: HTMLElement) => {
+    const images = document.querySelectorAll('.club-image')!;
+    return Array.from(images).indexOf(currentTarget);
   }, []);
 
   const onSubmit = useCallback((data: any) => {
@@ -365,11 +360,9 @@ export default function RenewClub() {
                   key={data}
                   className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
                   draggable={draggable}
-                  data-index={index}
                   data-is-last-index={index === total.length - 1}
                   onDragStart={onDragStart}
                   onDragOver={onDragOver}
-                  onDragLeave={onDragLeave}
                   onDragEnd={onDragEnd}
                   onDrop={onDrop}
                   onTouchMove={onTouchMove}
