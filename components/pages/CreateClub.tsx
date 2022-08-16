@@ -2,13 +2,16 @@ import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
 import { useForm } from 'react-hook-form';
 import {
+  useState,
   useCallback,
   useLayoutEffect,
   useEffect,
   useRef,
-  DragEvent
+  DragEvent,
+  TouchEvent
 } from 'react';
 import Icons from '../atoms/icons';
+import { isMobile } from 'react-device-detect';
 
 interface NestedValues {
   title: string;
@@ -30,6 +33,8 @@ export default function RenewClub() {
     reset,
     formState: { errors }
   } = useForm({ defaultValues });
+  const [draggable, setDraggable] = useState(false);
+
   const dragged: any = useRef({
     desktop: {
       doing: false,
@@ -54,20 +59,142 @@ export default function RenewClub() {
     register('max', { required: true, min: 1, max: Infinity });
   }, []);
 
-  const setDragSortableEvents = () => {
-    // console.log(document.querySelectorAll('.club-image'));
-    // console.log(document.querySelectorAll());
-  };
+  const onMouseDown = useCallback(() => {
+    if (isMobile) {
+      return;
+    }
+    dragged.current.desktop.doing = true;
+    setDraggable(true);
+  }, []);
 
-  const onDragStart = useCallback((event: DragEvent) => {
-    const currentTarget = event.currentTarget! as HTMLElement;
+  const onTouchStart = useCallback((event: TouchEvent) => {
+    const currentTarget = event.currentTarget.parentNode! as HTMLElement;
     const index = currentTarget.getAttribute('data-index');
 
-    currentTarget.classList!.add('drag--moving');
+    currentTarget.classList.add('drag--moving');
 
-    dragged.current.desktop.doing = true;
-    dragged.current.desktop.el = currentTarget;
-    dragged.current.desktop.index = index;
+    dragged.current.mobile.doing = true;
+    dragged.current.mobile.el = currentTarget;
+    dragged.current.mobile.index = index;
+  }, []);
+
+  const onTouchMove = useCallback((event: TouchEvent) => {
+    let waiting = false;
+
+    return (function () {
+      if (!waiting) {
+        waiting = true;
+
+        if (dragged.current.mobile.doing) {
+          const { clientX, clientY } = event.changedTouches[0];
+          const currentTarget = (
+            document.elementFromPoint(clientX, clientY) as HTMLElement
+          ).closest('.club-image');
+
+          if (currentTarget) {
+            const index = currentTarget!.getAttribute('data-index');
+            const draggedIndex = dragged.current.mobile.index;
+
+            const images = document.querySelectorAll('.club-image');
+            images.forEach((image) => {
+              image.classList.remove('drag--hover');
+            });
+
+            if (index !== draggedIndex) {
+              if (!currentTarget.className.includes('drag--hover')) {
+                currentTarget.classList.add('drag--hover');
+              }
+            }
+          }
+        }
+      }
+
+      setTimeout(() => {
+        waiting = false;
+      }, 250);
+    })();
+  }, []);
+
+  const onTouchEnd = useCallback((event: TouchEvent) => {
+    if (dragged.current.mobile.doing) {
+      const { clientX, clientY } = event.changedTouches[0];
+      const currentTarget = (
+        document.elementFromPoint(clientX, clientY) as HTMLElement
+      ).closest('.club-image');
+
+      if (currentTarget) {
+        const droppedIndex = Number(currentTarget.getAttribute('data-index'));
+        const draggedIndex = Number(dragged.current.mobile.index!);
+        let isLast = false;
+
+        if (draggedIndex !== droppedIndex) {
+          let originalPlace: HTMLElement | null = null;
+
+          if (dragged.current.mobile.el.nextSibling) {
+            originalPlace = dragged.current.mobile.el.nextSibling;
+          } else {
+            originalPlace = dragged.current.mobile.el.previousSibling;
+            isLast = true;
+          }
+
+          if (draggedIndex > droppedIndex) {
+            currentTarget.before(dragged.current.mobile.el);
+          } else {
+            currentTarget.after(dragged.current.mobile.el);
+          }
+
+          if (isLast) {
+            originalPlace!.after(currentTarget);
+          } else {
+            originalPlace!.before(currentTarget);
+          }
+        }
+      }
+
+      const images = document.querySelectorAll('.club-image');
+      images.forEach((image) => {
+        image.classList.remove('drag--hover');
+        image.classList.remove('drag--moving');
+      });
+
+      dragged.current.mobile.doing = false;
+    }
+  }, []);
+
+  const onTouchCancel = useCallback((event: TouchEvent) => {
+    let waiting = false;
+
+    return (function () {
+      if (!waiting) {
+        waiting = true;
+
+        const { clientX, clientY } = event.changedTouches[0];
+        const currentTarget = (
+          document.elementFromPoint(clientX, clientY) as HTMLElement
+        ).closest('.club-image');
+
+        if (currentTarget) {
+          if (currentTarget.className.includes('drag--hover')) {
+            currentTarget.classList.remove('drag--hover');
+          }
+        }
+      }
+      setTimeout(() => {
+        waiting = false;
+      }, 250);
+    })();
+  }, []);
+
+  const onDragStart = useCallback((event: DragEvent) => {
+    if (dragged.current.desktop.doing) {
+      const currentTarget = event.currentTarget! as HTMLElement;
+      const index = currentTarget.getAttribute('data-index');
+
+      currentTarget.classList!.add('drag--moving');
+
+      dragged.current.desktop.el = currentTarget;
+      dragged.current.desktop.index = index;
+    }
   }, []);
 
   const onDragOver = useCallback((event: DragEvent) => {
@@ -91,11 +218,11 @@ export default function RenewClub() {
             currentTarget.classList.add('drag--hover');
           }
         }
-
-        setTimeout(() => {
-          waiting = false;
-        }, 250);
       }
+
+      setTimeout(() => {
+        waiting = false;
+      }, 250);
     })();
   }, []);
 
@@ -104,10 +231,21 @@ export default function RenewClub() {
       return;
     }
 
-    const currentTarget = event.currentTarget!;
-    if (currentTarget.className.includes('drag--hover')) {
-      currentTarget.classList.remove('drag--hover');
-    }
+    let waiting = false;
+
+    return (function () {
+      if (!waiting) {
+        waiting = true;
+
+        const currentTarget = event.currentTarget!;
+        if (currentTarget.className.includes('drag--hover')) {
+          currentTarget.classList.remove('drag--hover');
+        }
+      }
+      setTimeout(() => {
+        waiting = false;
+      }, 250);
+    })();
   }, []);
 
   const onDragEnd = useCallback((event: DragEvent) => {
@@ -126,17 +264,22 @@ export default function RenewClub() {
     dragged.current.desktop.doing = null;
     dragged.current.desktop.el = null;
     dragged.current.desktop.index = null;
+
+    setDraggable(false);
   }, []);
 
   const onDrop = useCallback((event: DragEvent) => {
     if (!dragged.current.desktop.doing) {
       return;
     }
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
 
     const currentTarget = event.currentTarget!;
     const droppedIndex = Number(currentTarget.getAttribute('data-index'));
     const draggedIndex = Number(dragged.current.desktop.index!);
-    const isLast = currentTarget.getAttribute('data-is-last-index');
+    let isLast = false;
 
     if (draggedIndex !== droppedIndex) {
       let originalPlace: HTMLElement | null = null;
@@ -145,6 +288,7 @@ export default function RenewClub() {
         originalPlace = dragged.current.desktop.el.nextSibling;
       } else {
         originalPlace = dragged.current.desktop.el.previousSibling;
+        isLast = true;
       }
 
       if (draggedIndex > droppedIndex) {
@@ -211,7 +355,7 @@ export default function RenewClub() {
           <div className='flex items-end mb-2.5'>
             <h6 className='text-sm font-bold mr-1'>사진 업로드</h6>
             <div className='text-xs text-gray leading-[1.2rem]'>
-              (선택, 최대 10장)
+              (선택, 최대 10장) {dragged.current.desktop.doing}
             </div>
           </div>
           <div className='grid md:grid-cols-5 sm:grid-cols-4 grid-cols-3 gap-x-2 gap-y-2.5'>
@@ -219,24 +363,29 @@ export default function RenewClub() {
               (data, index, total) => (
                 <section
                   key={data}
-                  className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center'
-                  draggable='true'
+                  className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
+                  draggable={draggable}
                   data-index={index}
                   data-is-last-index={index === total.length - 1}
                   onDragStart={onDragStart}
                   onDragOver={onDragOver}
                   onDragLeave={onDragLeave}
                   onDragEnd={onDragEnd}
-                  onDrop={onDrop}>
+                  onDrop={onDrop}
+                  onTouchMove={onTouchMove}
+                  onTouchCancel={onTouchCancel}
+                  onTouchEnd={onTouchEnd}>
+                  <button
+                    type='button'
+                    className='w-8 h-8 rounded-full bg-gray flex justify-center items-center absolute right-7 -top-2'
+                    onMouseDown={onMouseDown}
+                    onTouchStart={onTouchStart}>
+                    <Icons.Move />
+                  </button>
                   <button
                     type='button'
                     className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'>
                     <Icons.WClose />
-                  </button>
-                  <button
-                    type='button'
-                    className='w-8 h-8 rounded-full bg-gray flex justify-center items-center absolute right-7 -top-2'>
-                    <Icons.Move />
                   </button>
                   <div>{index}</div>
                 </section>
