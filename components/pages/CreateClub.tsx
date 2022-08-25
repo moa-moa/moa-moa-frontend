@@ -8,7 +8,8 @@ import {
   useEffect,
   useRef,
   DragEvent,
-  TouchEvent
+  TouchEvent,
+  ChangeEvent
 } from 'react';
 import Icons from '../atoms/icons';
 import { isMobile } from 'react-device-detect';
@@ -17,19 +18,30 @@ interface NestedValues {
   title: string;
   description: string;
   max: number;
+  images: string[];
 }
 
 const defaultValues: NestedValues = {
   title: '',
   description: '',
-  max: Infinity
+  max: Infinity,
+  images: []
 };
+
+function usePrevious<T>(value: T): T {
+  const ref = useRef<T>(value);
+  useEffect(() => {
+    ref.current = value; //assign the value of ref to the argument
+  }, [value]); //this code will run when the value of 'value' changes
+  return ref.current; //in the end, return the current ref value.
+}
 
 export default function RenewClub() {
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors }
   } = useForm({ defaultValues });
@@ -47,6 +59,12 @@ export default function RenewClub() {
       index: null
     }
   });
+  const [photos, setPhotos] = useState<string[]>([]);
+  const uploadRef = useRef<HTMLInputElement | null>(null);
+  const { ref: fileRef, ...fileRest } = register('images');
+  const isMaxInfinity = getValues('max') === Infinity;
+  const [maxValue, setMaxValue] = useState<number>(4);
+  const previousMax = usePrevious(maxValue);
 
   const canUseDOM = !!(
     typeof window !== 'undefined' &&
@@ -305,6 +323,72 @@ export default function RenewClub() {
     []
   );
 
+  const onUpload = useCallback(() => {
+    if (uploadRef) {
+      uploadRef.current!.value = '';
+      uploadRef.current!.click();
+    }
+  }, []);
+
+  const onFileChange = useCallback(
+    async (event: ChangeEvent) => {
+      const target = event.target as HTMLInputElement;
+      const files = target.files;
+
+      if (files && files.length) {
+        const promises: Promise<string>[] = [];
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const reader = new FileReader();
+          const promise: Promise<string> = new Promise((resolve, reject) => {
+            reader.onload = (e: ProgressEvent<FileReader>) => {
+              const target = e.target!;
+              const { result } = target;
+              resolve(result as string);
+            };
+          });
+          promises.push(promise);
+          reader.readAsDataURL(file);
+        }
+
+        const resultFromPromiseSettled = await Promise.allSettled(promises);
+        const previews: string[] = resultFromPromiseSettled
+          .filter((p) => p.status === 'fulfilled')
+          .map((p: any) => p.value);
+
+        setPhotos((prev: any) => {
+          const newPreviews = [...prev, ...previews];
+          if (newPreviews.length) {
+            setValue('images', newPreviews, {
+              shouldValidate: true
+            });
+            return newPreviews;
+          }
+          setValue('images', newPreviews, {
+            shouldValidate: false
+          });
+          return newPreviews;
+        });
+      }
+    },
+    [photos]
+  );
+
+  const onPlusMax = useCallback(() => {
+    setMaxValue(maxValue + 1);
+    setValue('max', maxValue + 1);
+  }, [maxValue]);
+
+  const onMinusMax = useCallback(() => {
+    if (maxValue > 2) {
+      setMaxValue(maxValue - 1);
+      setValue('max', maxValue - 1);
+      return;
+    }
+    setMaxValue(2);
+    setValue('max', 2);
+  }, [maxValue]);
+
   const onSubmit = useCallback((data: any) => {
     console.log(data);
   }, []);
@@ -331,22 +415,42 @@ export default function RenewClub() {
         </section>
 
         <section className='form-group flex justify-center items-center gap-2 mb-5'>
-          <div className='flex-1 h-nav border border-border-gray rounded-[0.3125rem] text-gray'>
+          <div className='flex-1 h-nav'>
             <button
               type='button'
-              className='w-full h-full flex justify-center items-center gap-[0.3125rem]'>
-              <Icons.TCheckOff />
-              <span className='text-base'>인원 제한 없음</span>
+              className='w-full h-full flex justify-center items-center gap-[0.3125rem] border rounded-[0.3125rem]'
+              style={{
+                borderColor: isMaxInfinity ? '#ee2554' : '#ddd'
+              }}
+              onClick={() => {
+                setValue('max', Infinity, {
+                  shouldValidate: true
+                });
+                console.log(getValues('max'));
+              }}>
+              {isMaxInfinity ? <Icons.TCheckOn /> : <Icons.TCheckOff />}
+              <span
+                className='text-base'
+                style={{
+                  color: isMaxInfinity ? '#ee2554' : '#999'
+                }}>
+                인원 제한 없음
+              </span>
             </button>
           </div>
-          <div className='flex-1 flex justify-center items-center h-nav text-base text-gray border border-border-gray rounded-[0.3125rem]'>
+          <div
+            className='flex-1 flex justify-center items-center h-nav text-base text-gray border border-border-gray rounded-[0.3125rem]'
+            style={{
+              borderColor: !isMaxInfinity ? '#ee2554' : '#ddd',
+              color: !isMaxInfinity ? '#ee2554' : '#999'
+            }}>
             <div>최대</div>
-            <button type='button'>
-              <Icons.TMinusOff />
+            <button type='button' onClick={onMinusMax}>
+              {!isMaxInfinity ? <Icons.TMinusOn /> : <Icons.TMinusOff />}
             </button>
-            <div>4명</div>
-            <button type='button'>
-              <Icons.TPlusOff />
+            <div>{maxValue}명</div>
+            <button type='button' onClick={onPlusMax}>
+              {!isMaxInfinity ? <Icons.TPlusOn /> : <Icons.TPlusOff />}
             </button>
           </div>
         </section>
@@ -359,36 +463,57 @@ export default function RenewClub() {
             </div>
           </div>
           <div className='grid md:grid-cols-5 sm:grid-cols-4 grid-cols-3 gap-x-2 gap-y-2.5'>
-            {Array.from({ length: 10 }, (_, index) => index + 1).map(
-              (data, index, total) => (
-                <section
-                  key={data}
-                  className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
-                  draggable={draggable}
-                  data-is-last-index={index === total.length - 1}
-                  onDragStart={onDragStart}
-                  onDragOver={onDragOver}
-                  onDragEnd={onDragEnd}
-                  onDrop={onDrop}
-                  onTouchMove={onTouchMove}
-                  onTouchCancel={onTouchCancel}
-                  onTouchEnd={onTouchEnd}>
-                  <button
-                    type='button'
-                    className='w-8 h-8 rounded-full bg-gray flex justify-center items-center absolute right-7 -top-2'
-                    onMouseDown={onMouseDown}
-                    onTouchStart={onTouchStart}>
-                    <Icons.Move />
-                  </button>
-                  <button
-                    type='button'
-                    className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'>
-                    <Icons.WClose />
-                  </button>
-                  <div>{index}</div>
-                </section>
-              )
-            )}
+            <section className='w-full h-0 pb-[100%] rounded-[0.3125rem] border relative'>
+              <div
+                className='absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full h-full flex justify-center items-center cursor-pointer'
+                onClick={onUpload}>
+                <Icons.Photo />
+              </div>
+              <input
+                type='file'
+                accept='image/*'
+                style={{ display: 'none' }}
+                multiple
+                {...fileRest}
+                ref={(e) => {
+                  fileRef(e);
+                  uploadRef.current = e;
+                }}
+                onChange={onFileChange}
+              />
+            </section>
+            {photos.map((data, index, total) => (
+              <section
+                key={data}
+                className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
+                style={{
+                  backgroundImage: `url("${data}")`,
+                  backgroundPosition: 'center center',
+                  backgroundSize: 'covoer'
+                }}
+                draggable={draggable}
+                data-is-last-index={index === total.length - 1}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDragEnd={onDragEnd}
+                onDrop={onDrop}
+                onTouchMove={onTouchMove}
+                onTouchCancel={onTouchCancel}
+                onTouchEnd={onTouchEnd}>
+                <button
+                  type='button'
+                  className='w-8 h-8 rounded-full bg-gray flex justify-center items-center absolute right-7 -top-2'
+                  onMouseDown={onMouseDown}
+                  onTouchStart={onTouchStart}>
+                  <Icons.Move />
+                </button>
+                <button
+                  type='button'
+                  className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'>
+                  <Icons.WClose />
+                </button>
+              </section>
+            ))}
           </div>
         </section>
 
