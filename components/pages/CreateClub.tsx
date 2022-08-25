@@ -1,6 +1,6 @@
 import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import {
   useState,
   useCallback,
@@ -18,7 +18,7 @@ interface NestedValues {
   title: string;
   description: string;
   max: number;
-  images: string[];
+  images: { value: string }[];
 }
 
 const defaultValues: NestedValues = {
@@ -42,9 +42,19 @@ export default function RenewClub() {
     handleSubmit,
     setValue,
     getValues,
-    reset,
+    control,
     formState: { errors }
   } = useForm({ defaultValues });
+  const { ref: fileRef, ...fileRest } = register('images', {
+    required: true
+  });
+  const { fields, append: addImage } = useFieldArray({
+    control: control,
+    name: 'images',
+    rules: {
+      minLength: 1
+    }
+  });
   const [draggable, setDraggable] = useState(false);
 
   const dragged: any = useRef({
@@ -61,7 +71,6 @@ export default function RenewClub() {
   });
   const [photos, setPhotos] = useState<string[]>([]);
   const uploadRef = useRef<HTMLInputElement | null>(null);
-  const { ref: fileRef, ...fileRest } = register('images');
   const isMaxInfinity = getValues('max') === Infinity;
   const [maxValue, setMaxValue] = useState<number>(4);
   const previousMax = usePrevious(maxValue);
@@ -352,27 +361,42 @@ export default function RenewClub() {
         }
 
         const resultFromPromiseSettled = await Promise.allSettled(promises);
-        const previews: string[] = resultFromPromiseSettled
-          .filter((p) => p.status === 'fulfilled')
-          .map((p: any) => p.value);
+        const previews: PromiseSettledResult<string>[] =
+          resultFromPromiseSettled.filter((p) => p.status === 'fulfilled');
 
-        setPhotos((prev: any) => {
-          const newPreviews = [...prev, ...previews];
-          if (newPreviews.length) {
-            setValue('images', newPreviews, {
-              shouldValidate: true
-            });
-            return newPreviews;
-          }
-          setValue('images', newPreviews, {
-            shouldValidate: false
-          });
-          return newPreviews;
-        });
+        for (let i = 0; i < previews.length; i++) {
+          const preview = previews[i] as PromiseFulfilledResult<string>;
+          const value = preview.value;
+          addImage({ value });
+        }
+
+        console.log(fields);
+
+        // setPhotos((prev: any) => {
+        //   const newPreviews = [...prev, ...previews];
+        //   if (newPreviews.length) {
+        //     setValue('images', newPreviews, {
+        //       shouldValidate: true
+        //     });
+        //     return newPreviews;
+        //   }
+        //   setValue('images', newPreviews, {
+        //     shouldValidate: false
+        //   });
+        //   return newPreviews;
+        // });
       }
     },
     [photos]
   );
+
+  const onResetMax = useCallback(() => {
+    console.log('클릭', maxValue);
+    setMaxValue(maxValue);
+    setValue('max', maxValue, {
+      shouldValidate: true
+    });
+  }, [maxValue]);
 
   const onPlusMax = useCallback(() => {
     setMaxValue(maxValue + 1);
@@ -426,7 +450,6 @@ export default function RenewClub() {
                 setValue('max', Infinity, {
                   shouldValidate: true
                 });
-                console.log(getValues('max'));
               }}>
               {isMaxInfinity ? <Icons.TCheckOn /> : <Icons.TCheckOff />}
               <span
@@ -448,7 +471,9 @@ export default function RenewClub() {
             <button type='button' onClick={onMinusMax}>
               {!isMaxInfinity ? <Icons.TMinusOn /> : <Icons.TMinusOff />}
             </button>
-            <div>{maxValue}명</div>
+            <button type='button' onClick={onResetMax}>
+              {maxValue}명
+            </button>
             <button type='button' onClick={onPlusMax}>
               {!isMaxInfinity ? <Icons.TPlusOn /> : <Icons.TPlusOff />}
             </button>
@@ -463,7 +488,7 @@ export default function RenewClub() {
             </div>
           </div>
           <div className='grid md:grid-cols-5 sm:grid-cols-4 grid-cols-3 gap-x-2 gap-y-2.5'>
-            <section className='w-full h-0 pb-[100%] rounded-[0.3125rem] border relative'>
+            <section className='w-full h-0 pb-[100%] rounded-[0.3125rem] border border-[#ddd] relative'>
               <div
                 className='absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full h-full flex justify-center items-center cursor-pointer'
                 onClick={onUpload}>
@@ -482,12 +507,12 @@ export default function RenewClub() {
                 onChange={onFileChange}
               />
             </section>
-            {photos.map((data, index, total) => (
+            {fields.map(({ value }, index, total) => (
               <section
-                key={data}
+                key={`image-${index}`}
                 className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
                 style={{
-                  backgroundImage: `url("${data}")`,
+                  backgroundImage: `url("${value}")`,
                   backgroundPosition: 'center center',
                   backgroundSize: 'covoer'
                 }}
