@@ -1,18 +1,20 @@
+import React from 'react';
 import Layout from '@/components/templates/layouts';
 import Organisms from '../organisms';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
   useState,
   useCallback,
-  useLayoutEffect,
-  useEffect,
   useRef,
   DragEvent,
   TouchEvent,
-  ChangeEvent
+  ChangeEvent,
+  MouseEvent
 } from 'react';
 import Icons from '../atoms/icons';
 import { isMobile } from 'react-device-detect';
+import useIsomorphicLayoutEffect from '@/hooks/useIsomophicLayoutEffect';
+import usePrevious from '@/hooks/usePrevious';
 
 interface NestedValues {
   title: string;
@@ -28,14 +30,6 @@ const defaultValues: NestedValues = {
   images: []
 };
 
-function usePrevious<T>(value: T): T {
-  const ref = useRef<T>(value);
-  useEffect(() => {
-    ref.current = value; //assign the value of ref to the argument
-  }, [value]); //this code will run when the value of 'value' changes
-  return ref.current; //in the end, return the current ref value.
-}
-
 export default function RenewClub() {
   const {
     register,
@@ -43,12 +37,16 @@ export default function RenewClub() {
     setValue,
     getValues,
     control,
-    formState: { errors }
+    formState: { errors, isValid }
   } = useForm({ defaultValues });
   const { ref: fileRef, ...fileRest } = register('images', {
     required: true
   });
-  const { fields, append: addImage } = useFieldArray({
+  const {
+    fields: photos,
+    append: addImage,
+    remove: removeImage
+  } = useFieldArray({
     control: control,
     name: 'images',
     rules: {
@@ -69,18 +67,12 @@ export default function RenewClub() {
       index: null
     }
   });
-  const [photos, setPhotos] = useState<string[]>([]);
   const uploadRef = useRef<HTMLInputElement | null>(null);
   const isMaxInfinity = getValues('max') === Infinity;
-  const [maxValue, setMaxValue] = useState<number>(4);
-  const previousMax = usePrevious(maxValue);
-
-  const canUseDOM = !!(
-    typeof window !== 'undefined' &&
-    typeof window.document !== 'undefined' &&
-    typeof window.document.createElement !== 'undefined'
-  );
-  const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
+  const previousMax = usePrevious(getValues('max'), {
+    preventUpdate: isMaxInfinity,
+    initialValue: 4
+  });
 
   useIsomorphicLayoutEffect(() => {
     register('max', { required: true, min: 1, max: Infinity });
@@ -339,79 +331,78 @@ export default function RenewClub() {
     }
   }, []);
 
-  const onFileChange = useCallback(
-    async (event: ChangeEvent) => {
-      const target = event.target as HTMLInputElement;
-      const files = target.files;
+  const onFileChange = useCallback(async (event: ChangeEvent) => {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
 
-      if (files && files.length) {
-        const promises: Promise<string>[] = [];
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const reader = new FileReader();
-          const promise: Promise<string> = new Promise((resolve, reject) => {
-            reader.onload = (e: ProgressEvent<FileReader>) => {
-              const target = e.target!;
-              const { result } = target;
-              resolve(result as string);
-            };
-          });
-          promises.push(promise);
-          reader.readAsDataURL(file);
-        }
-
-        const resultFromPromiseSettled = await Promise.allSettled(promises);
-        const previews: PromiseSettledResult<string>[] =
-          resultFromPromiseSettled.filter((p) => p.status === 'fulfilled');
-
-        for (let i = 0; i < previews.length; i++) {
-          const preview = previews[i] as PromiseFulfilledResult<string>;
-          const value = preview.value;
-          addImage({ value });
-        }
-
-        console.log(fields);
-
-        // setPhotos((prev: any) => {
-        //   const newPreviews = [...prev, ...previews];
-        //   if (newPreviews.length) {
-        //     setValue('images', newPreviews, {
-        //       shouldValidate: true
-        //     });
-        //     return newPreviews;
-        //   }
-        //   setValue('images', newPreviews, {
-        //     shouldValidate: false
-        //   });
-        //   return newPreviews;
-        // });
+    if (files && files.length) {
+      const promises: Promise<string>[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        const promise: Promise<string> = new Promise((resolve, reject) => {
+          reader.onload = (e: ProgressEvent<FileReader>) => {
+            const target = e.target!;
+            const { result } = target;
+            resolve(result as string);
+          };
+        });
+        promises.push(promise);
+        reader.readAsDataURL(file);
       }
-    },
-    [photos]
-  );
+
+      const resultFromPromiseSettled = await Promise.allSettled(promises);
+      const previews: PromiseSettledResult<string>[] =
+        resultFromPromiseSettled.filter((p) => p.status === 'fulfilled');
+
+      for (let i = 0; i < previews.length; i++) {
+        const preview = previews[i] as PromiseFulfilledResult<string>;
+        const value = preview.value;
+        addImage({ value });
+      }
+    }
+  }, []);
+
+  const onDeletePhoto = useCallback((event: MouseEvent, index: number) => {
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
+
+    removeImage(index);
+  }, []);
 
   const onResetMax = useCallback(() => {
-    console.log('클릭', maxValue);
-    setMaxValue(maxValue);
-    setValue('max', maxValue, {
-      shouldValidate: true
+    const newValue = isMaxInfinity ? previousMax : getValues('max');
+    setValue('max', newValue, {
+      shouldValidate: true,
+      shouldDirty: true
     });
-  }, [maxValue]);
+  }, [getValues('max')]);
 
   const onPlusMax = useCallback(() => {
-    setMaxValue(maxValue + 1);
-    setValue('max', maxValue + 1);
-  }, [maxValue]);
+    const newValue = isMaxInfinity ? previousMax : getValues('max');
+    setValue('max', newValue + 1, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+  }, [getValues('max')]);
 
   const onMinusMax = useCallback(() => {
-    if (maxValue > 2) {
-      setMaxValue(maxValue - 1);
-      setValue('max', maxValue - 1);
+    const newValue = isMaxInfinity ? previousMax : getValues('max');
+
+    if (newValue > 2) {
+      setValue('max', newValue - 1, {
+        shouldValidate: true,
+        shouldDirty: true
+      });
       return;
     }
-    setMaxValue(2);
-    setValue('max', 2);
-  }, [maxValue]);
+
+    setValue('max', 2, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+  }, [getValues('max')]);
 
   const onSubmit = useCallback((data: any) => {
     console.log(data);
@@ -472,7 +463,7 @@ export default function RenewClub() {
               {!isMaxInfinity ? <Icons.TMinusOn /> : <Icons.TMinusOff />}
             </button>
             <button type='button' onClick={onResetMax}>
-              {maxValue}명
+              {isMaxInfinity ? previousMax : getValues('max')}명
             </button>
             <button type='button' onClick={onPlusMax}>
               {!isMaxInfinity ? <Icons.TPlusOn /> : <Icons.TPlusOff />}
@@ -507,7 +498,7 @@ export default function RenewClub() {
                 onChange={onFileChange}
               />
             </section>
-            {fields.map(({ value }, index, total) => (
+            {photos.map(({ value }, index, total) => (
               <section
                 key={`image-${index}`}
                 className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
@@ -534,7 +525,8 @@ export default function RenewClub() {
                 </button>
                 <button
                   type='button'
-                  className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'>
+                  className='w-8 h-8 rounded-full bg-moa-pink flex justify-center items-center absolute -right-1 -top-2'
+                  onClick={(e) => onDeletePhoto(e, index)}>
                   <Icons.WClose />
                 </button>
               </section>
@@ -545,7 +537,12 @@ export default function RenewClub() {
         <section className='form-group fixed left-0 bottom-0 w-screen h-nav md:max-w-5xl md:mx-auto md:left-1/2 md:-translate-x-1/2'>
           <button
             type='submit'
-            className='w-full h-full bg-disabled text-gray text-base'>
+            className='w-full h-full bg-disabled text-base'
+            disabled={!isValid}
+            style={{
+              backgroundColor: isValid ? '#ee2554' : '#EEEEEE',
+              color: isValid ? '#fff' : '#AAAAAA'
+            }}>
             등록
           </button>
         </section>
