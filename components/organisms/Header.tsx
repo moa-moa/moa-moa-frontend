@@ -8,7 +8,7 @@ export default function Haeder() {
   return (
     <header
       className={'h-header sticky top-0 left-0 bg-white z-10' + activeShadow}>
-      <section className='flex justify-center items-center max-w-7xl mx-auto w-full h-full'>
+      <section className='flex justify-center items-center max-w-5xl mx-auto w-full h-full'>
         <Icons.HeaderLogo />
       </section>
     </header>

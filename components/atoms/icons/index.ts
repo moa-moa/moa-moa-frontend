@@ -7,6 +7,16 @@ import People from './People';
 import CrownOn from './CrownOn';
 import CrownOff from './CrownOff';
 import Plus from './Plus';
+import Close from './Close';
+import TPlusOn from './TPlusOn';
+import TPlusOff from './TPlusOff';
+import TMinusOn from './TMinusOn';
+import TMinusOff from './TMinusOff';
+import TCheckOn from './TCheckOn';
+import TCheckOff from './TCheckOff';
+import WClose from './WClose';
+import Move from './Move';
+import Photo from './Photo';
 
 export default {
   HeaderLogo,
@@ -17,5 +27,15 @@ export default {
   CrownOn,
   CrownOff,
   People,
-  Plus
+  Plus,
+  Close,
+  TPlusOn,
+  TPlusOff,
+  TMinusOn,
+  TMinusOff,
+  TCheckOn,
+  TCheckOff,
+  WClose,
+  Move,
+  Photo
 };

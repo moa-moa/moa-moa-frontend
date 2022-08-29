@@ -14,8 +14,11 @@ module.exports = {
         'default-black': '#1c1c1c',
         'default-gray': '#AAAAAA',
         'light-gray': '#F8F8F8',
+        'border-gray': '#DDDDDD',
+        disabled: '#EEEEEE',
         lunch: '#F178B6',
-        gray: '#999999'
+        gray: '#999999',
+        'moa-pink': '#ee2554'
       }
     }
   },

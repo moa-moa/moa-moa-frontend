@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  height: 200vh;
+.drag--moving {
+  @apply opacity-5;
+}
+
+.drag--hover {
+  @apply text-[#ffffff24] shadow-[#ffffff24] scale-75;
+  -webkit-transition: 0.3s ease-out;
+  transition: 0.3s ease-out;
 }
