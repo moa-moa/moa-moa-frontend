@@ -1,5 +1,5 @@
 import { useScrollPosition } from '@/hooks/useScrollPosition';
-import Icons from '@/components/atoms/icons';
+import Icons from '@/components/icons';
 
 export default function Haeder() {
   const { scrollY } = useScrollPosition();

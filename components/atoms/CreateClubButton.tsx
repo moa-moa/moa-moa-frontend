@@ -1,4 +1,4 @@
-import Icons from './icons';
+import Icons from '../icons';
 import Link from 'next/link';
 
 export default function CreateClubButton() {

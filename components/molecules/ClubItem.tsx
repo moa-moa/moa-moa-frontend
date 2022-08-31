@@ -1,4 +1,4 @@
-import Icons from '../atoms/icons';
+import Icons from '../icons';
 import { IClub } from '@/models/interfaces/data/Club';
 import { BadgeType } from '@/models/types/UI/badge';
 import Atom from '../atoms';

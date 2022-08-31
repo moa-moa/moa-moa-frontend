@@ -11,7 +11,7 @@ import {
   ChangeEvent,
   MouseEvent
 } from 'react';
-import Icons from '../atoms/icons';
+import Icons from '../icons';
 import { isMobile } from 'react-device-detect';
 import useIsomorphicLayoutEffect from '@/hooks/useIsomophicLayoutEffect';
 import usePrevious from '@/hooks/usePrevious';
