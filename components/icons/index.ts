@@ -1,4 +1,4 @@
-import HeaderLogo from './HeaderLogo';
+import Logo from './Logo';
 import HomeOff from './HomeOff';
 import HomeOn from './HomeOn';
 import MyPageOff from './MyPageOff';
@@ -17,9 +17,10 @@ import TCheckOff from './TCheckOff';
 import WClose from './WClose';
 import Move from './Move';
 import Photo from './Photo';
+import Google from './Google';
 
 export default {
-  HeaderLogo,
+  Logo,
   HomeOff,
   HomeOn,
   MyPageOff,
@@ -37,5 +38,6 @@ export default {
   TCheckOff,
   WClose,
   Move,
-  Photo
+  Photo,
+  Google
 };

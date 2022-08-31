@@ -1,9 +1,14 @@
-export default function HeaderLogo() {
+interface Props {
+  width?: string;
+  height?: string;
+}
+
+export default function Logo({ width, height }: Props) {
   return (
     <>
       <svg
-        width='122'
-        height='20'
+        width={width || '122'}
+        height={height || '20'}
         viewBox='0 0 122 20'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'>
