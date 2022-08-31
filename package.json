@@ -13,6 +13,7 @@
     "prepare": "if [[ $NODE_ENVIRONMENT != \"production\" ]]; then husky install; fi"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.2.3",
     "@use-gesture/react": "^10.2.17",
     "axios": "^0.27.2",
     "next": "12.2.3",
