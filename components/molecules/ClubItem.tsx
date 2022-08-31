@@ -18,7 +18,7 @@ export default function ClubItem({
 
   return (
     <li>
-      <Link href={isAvailable ? `/club/${id}` : 'javascript:void(0)'}>
+      <Link href={isAvailable ? `/club/${id}` : ''}>
         <a className='block p-5 bg-light-gray rounded-[0.3125rem]'>
           <div className='flex items-center mb-2'>
             <div className='flex gap-[0.3125rem] mr-2.5'>
