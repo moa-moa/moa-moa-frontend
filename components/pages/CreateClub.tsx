@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '@/components/templates/layouts';
+import Layout from '@/components/templates';
 import Organisms from '../organisms';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
