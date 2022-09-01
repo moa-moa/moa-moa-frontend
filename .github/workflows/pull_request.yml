@@ -1,0 +1,22 @@
+name: PULL REQUEST TO MAIN
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  name: 병합 전에 린터 및 테스트를 진행합니다.
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      node-version: [18.x]
+    steps:
+      - use: actions/checkout@v2
+      - name: Use Node.js ${{matrix.node_version}}
+        use: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node_version}}
+      - run: npm i
+      - run: CI=false npm run build --if-present
+      - run: npm run lint
+      - run: npm run test:no-watch
