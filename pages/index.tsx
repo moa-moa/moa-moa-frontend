@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Pages from '@/components/pages';
-import AuthService from 'services/auth.service';
+import AuthService from '@/services/auth.service';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import useNavigationGuard from '@/hooks/useNavigationGuard';
 
@@ -16,9 +16,9 @@ export async function getStaticProps() {
 }
 
 const Home: NextPage = () => {
-  const { isLoading } = useNavigationGuard();
+  const { isLoading, isError } = useNavigationGuard();
 
-  if (isLoading) {
+  if (isLoading || isError) {
     return <div>loading...</div>;
   }
 
