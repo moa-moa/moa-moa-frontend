@@ -3,7 +3,7 @@ import Icons from '../icons';
 
 export default function LoginButton() {
   return (
-    <Link href='http://localhost:3000/auth/google'>
+    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`}>
       <a className='flex items-center justify-center gap-[0.6875rem] w-full max-w-[19.4375rem] h-16 border border-gray cursor-pointer rounded-[0.3125rem]'>
         <span className='block w-6 h-6'>
           <Icons.Google />
