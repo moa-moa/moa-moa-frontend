@@ -1,5 +1,5 @@
 import { BadgeType } from '@/models/types/UI/badge';
-import Icons from './icons';
+import Icons from '../icons';
 
 export default function Badge({
   type,

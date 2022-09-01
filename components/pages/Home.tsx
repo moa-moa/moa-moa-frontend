@@ -1,4 +1,4 @@
-import Layout from '@/components/templates/layouts';
+import Layout from '@/components/templates';
 import Organisms from '../organisms';
 import Atoms from '../atoms';
 import Modal from '../atoms/Modal';

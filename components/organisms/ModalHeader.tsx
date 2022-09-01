@@ -1,4 +1,4 @@
-import Icons from '../atoms/icons';
+import Icons from '../icons';
 
 interface Props {
   title: string;

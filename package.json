@@ -3,17 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "deploy": "npm run build && gcloud app deploy",
     "lint": "next lint --fix",
     "test": "jest --watch",
+    "test:no-watch": "jest",
     "test:ci": "jest --ci",
     "prepare": "if [[ $NODE_ENVIRONMENT != \"production\" ]]; then husky install; fi"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.2.3",
     "@use-gesture/react": "^10.2.17",
+    "axios": "^0.27.2",
     "next": "12.2.3",
     "react": "18.2.0",
     "react-device-detect": "^2.2.2",

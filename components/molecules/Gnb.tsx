@@ -1,8 +1,8 @@
 import { ReactElement, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
-import Icons from '@/components/atoms/icons';
-import GnbItem from '@/components/atoms/gnb/GnbItem';
+import Icons from '@/components/icons';
+import GnbItem from '@/components/atoms/GnbItem';
 
 interface Button {
   id: 'home' | 'profile';

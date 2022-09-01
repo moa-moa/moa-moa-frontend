@@ -1,4 +1,4 @@
-import Layout from '@/components/templates/layouts';
+import Layout from '@/components/templates';
 
 export default function Profile() {
   return (
