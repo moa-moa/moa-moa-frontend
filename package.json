@@ -9,6 +9,7 @@
     "deploy": "npm run build && gcloud app deploy",
     "lint": "next lint --fix",
     "test": "jest --watch",
+    "test:no-watch": "jest",
     "test:ci": "jest --ci",
     "prepare": "if [[ $NODE_ENVIRONMENT != \"production\" ]]; then husky install; fi"
   },
