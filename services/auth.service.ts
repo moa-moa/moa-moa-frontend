@@ -1,7 +1,8 @@
+import { IToken } from '@/models/interfaces/data/Token';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 interface IAuthService {
-  googleLogin: () => Promise<AxiosResponse<any, any>>;
+  googleLogin: () => Promise<IToken>;
 }
 
 class AuthService implements IAuthService {
@@ -15,9 +16,11 @@ class AuthService implements IAuthService {
     this._accessToken = value;
   }
 
-  async googleLogin() {
+  async googleLogin(): Promise<IToken> {
     try {
-      const { data } = await axios.get<any>('/moamoa/auth/auto-login');
+      const { data } = await axios.get<IToken>(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/auto-login`
+      );
       return data;
     } catch (e: Error | AxiosError | unknown) {
       if (axios.isAxiosError(e)) {
