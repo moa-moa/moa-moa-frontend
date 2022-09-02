@@ -3,7 +3,7 @@ type UseHoverType<T = any> = [LegacyRef<T>, boolean];
 
 export default function useHover(): UseHoverType<any> {
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const ref = useRef<T>(null);
+  const ref = useRef<HTMLElement | null>(null);
   const handleMouseOver = () => setIsHovered(true);
   const handleMouseOut = () => setIsHovered(false);
 
