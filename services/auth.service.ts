@@ -24,15 +24,40 @@ class AuthService implements IAuthService {
     this.timer = setTimeout(callback, DELAY_TIME);
   }
 
+  async logout() {
+    try {
+      return await axios.get('/moamoa/auth/logout');
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        throw {
+          status: e.response?.status,
+          message: e.message
+        };
+      }
+      throw {
+        status: 400,
+        message: 'Something went wrong'
+      };
+    }
+  }
+
   async googleLogin(): Promise<IToken> {
     try {
       const { data } = await axios.get<IToken>('/moamoa/auth/auto-login');
       return data;
     } catch (e: Error | AxiosError | unknown) {
       if (axios.isAxiosError(e)) {
-        throw new Error(e.message);
+        console.log('axious error');
+        console.log(e);
+        throw {
+          status: e.response?.status,
+          message: e.message
+        };
       }
-      throw new Error('Something went wrong');
+      throw {
+        status: 500,
+        message: 'Something went wrong'
+      };
     }
   }
 
