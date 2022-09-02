@@ -1,117 +1,63 @@
-import useIsomophicLayoutEffect from '@/hooks/useIsomophicLayoutEffect';
-import { MouseEvent as ReactMouseEvent, useRef, useCallback } from 'react';
-
-interface Position {
-  scrollLeft: number;
-  clientX: number;
-  scrollY: number;
-}
+import useCategories from '@/hooks/useCategories';
+import useSwiper from '@/hooks/useSwiper';
+import Atoms from '../atoms';
 
 interface Props {
   type?: 'slide' | 'wrap';
 }
 
-const position: Position = {
-  scrollLeft: 0,
-  clientX: 0,
-  scrollY: 0
-};
-
 export default function TabCategories({ type }: Props) {
-  const categories = [
-    '전체(7)',
-    '점심(3)',
-    '스터디(2)',
-    '공동구매(1)',
-    '게임(1)',
-    '술(0)',
-    '문화생활(0)',
-    '독서(0)',
-    '기타(0)'
-  ];
   const uiType = type || 'slide';
   const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
-  const scrollEl = useRef<HTMLUListElement | null>(null);
+  const { data, isLoading, isError } = useCategories();
+  const ref = useSwiper({ dependencies: [data] });
 
-  useIsomophicLayoutEffect(() => {
-    scrollEl.current?.addEventListener('wheel', onMouseWheel, {
-      passive: false
-    });
+  if (isLoading || isError) {
+    const widths = [
+      '4.0625rem',
+      '4.0625rem',
+      '4.8125rem',
+      '5.625rem',
+      '4.0625rem',
+      '3.25rem',
+      '5.625rem',
+      '4.0625rem',
+      '4.0625rem',
+      '4.0625rem',
+      '2.875rem'
+    ];
+    return (
+      <nav id='navHeader' className='w-full mb-6'>
+        <ul className='w-full flex gap-1.5 overflow-x-auto px-4 scrollbar-hide'>
+          {widths.map((width, index) => (
+            <li
+              key={`skeleton-cate-${index}}`}
+              className='skeleton shrink-0 h-8 rounded-[0.3125rem]'
+              style={{ width: width }}></li>
+          ))}
+        </ul>
+      </nav>
+    );
+  }
 
-    return () => {
-      scrollEl.current?.removeEventListener('wheel', onMouseWheel);
-    };
-  }, []);
-
-  const onMouseDownHandler = useCallback((event: ReactMouseEvent) => {
-    let waiting = false;
-    return (function () {
-      if (!waiting) {
-        position['scrollLeft'] = scrollEl.current!.scrollLeft;
-        position['clientX'] = event.clientX;
-
-        document.addEventListener('mousemove', onMouseMoveHandler);
-        document.addEventListener('mouseup', onMouseUpHandler);
-        waiting = true;
-        setTimeout(() => {
-          waiting = false;
-        }, 250);
-      }
-    })();
-  }, []);
-
-  const onMouseMoveHandler = useCallback((event: MouseEvent) => {
-    const diff: number = event.clientX - position['clientX'];
-    scrollEl.current!.scrollLeft = position.scrollLeft - diff;
-  }, []);
-
-  const onMouseUpHandler = useCallback(() => {
-    document.removeEventListener('mousemove', onMouseMoveHandler);
-    document.removeEventListener('mouseup', onMouseUpHandler);
-  }, []);
-
-  const onMouseWheel = useCallback((event: WheelEvent) => {
-    let wheelingTimer: NodeJS.Timeout | null = null;
-
-    event.preventDefault();
-
-    return (function () {
-      if (wheelingTimer === null) {
-        position['scrollY'] = window.scrollY;
-        window.addEventListener('scroll', noscroll);
-      }
-
-      const delta = event.deltaY;
-      scrollEl.current!.scrollLeft += delta;
-
-      clearTimeout(wheelingTimer!);
-      wheelingTimer = setTimeout(() => {
-        wheelingTimer = null;
-        window.removeEventListener('scroll', noscroll);
-      }, 250);
-    })();
-  }, []);
-
-  const noscroll = function () {
-    window.scrollTo(0, position['scrollY']);
-    return false;
-  };
+  const allCategory = { id: -1, name: '전체', backColor: '#333333' };
+  const endCategory = { id: -2, name: '종료', backColor: '#777777' };
+  const categories = [allCategory, ...data, endCategory];
 
   return (
     <nav id='navHeader' className='w-full mb-6'>
       <ul
-        ref={scrollEl}
+        ref={ref}
         className={
           'w-full flex gap-1.5 overflow-x-auto px-4 scrollbar-hide' + wrapStyle
-        }
-        onMouseDown={onMouseDownHandler}>
+        }>
         {categories.map((category) => {
           return (
-            <li key={category} className='shrink-0'>
-              <button className='px-2.5 py-[0.3125rem] text-sm shrink-0 border border-[#dddddd] rounded-[0.3125rem]'>
-                {category}
-              </button>
-            </li>
+            <Atoms.CategoryButton
+              key={`cate-${category.id}`}
+              info={{ name: category.name, type: '' + category.id, num: 0 }}
+              style={{ backColor: category.backColor }}
+            />
           );
         })}
       </ul>
