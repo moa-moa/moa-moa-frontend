@@ -10,7 +10,6 @@ interface Props {
 }
 
 export default function CategoryButton({ info: { name, num }, style }: Props) {
-  // const ref = useRef(null);
   const [hoverRef, isHovered] = useHover();
   const buttonText = `${name} (${num})`;
   return (
