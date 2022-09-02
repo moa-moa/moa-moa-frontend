@@ -12,7 +12,13 @@ export default function useNavigationGuard() {
       AuthService.setAccessToken(data.accessToken);
       AuthService.refreshLogin(response.refetch);
     },
-    onError: (error) => {
+    onError: async (error: { status: number; message: string }) => {
+      const status = error.status;
+      if (status === 401) {
+        if (AuthService.accessToken) {
+          await AuthService.logout();
+        }
+      }
       router.replace('/login');
     }
   });
