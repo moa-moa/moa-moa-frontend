@@ -7,12 +7,21 @@ interface IAuthService {
 
 class AuthService implements IAuthService {
   private _accessToken: string | null = null;
+  private _updatedAtToken: number | null = null;
+  private timer: NodeJS.Timeout | undefined = undefined;
   constructor() {
     // To do
   }
 
   setAccessToken(value: string) {
     this._accessToken = value;
+    this._updatedAtToken = +new Date();
+  }
+
+  refreshLogin(callback: () => void) {
+    const DELAY_TIME = 1000 * 60 * 119;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(callback, DELAY_TIME);
   }
 
   async googleLogin(): Promise<IToken> {
