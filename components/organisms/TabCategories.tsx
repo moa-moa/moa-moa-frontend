@@ -1,15 +1,28 @@
-import useCategories from '@/hooks/useCategories';
 import useSwiper from '@/hooks/useSwiper';
+import { ICategory } from '@/models/interfaces/data/Category';
+import { useState } from 'react';
 import Atoms from '../atoms';
 
 interface Props {
   type?: 'slide' | 'wrap';
+  info: {
+    data: ICategory[] | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
 }
 
-export default function TabCategories({ type }: Props) {
+const allCategory = { id: -1, name: '전체', backColor: '#333333' };
+const endCategory = { id: -2, name: '종료', backColor: '#777777' };
+
+export default function TabCategories({
+  type,
+  info: { data, isLoading, isError }
+}: Props) {
+  const [selectedCategory, setSelectedCategory] =
+    useState<ICategory>(allCategory);
   const uiType = type || 'slide';
   const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
-  const { data, isLoading, isError } = useCategories();
   const ref = useSwiper({ dependencies: [data] });
 
   if (isLoading || isError) {
@@ -40,9 +53,7 @@ export default function TabCategories({ type }: Props) {
     );
   }
 
-  const allCategory = { id: -1, name: '전체', backColor: '#333333' };
-  const endCategory = { id: -2, name: '종료', backColor: '#777777' };
-  const categories = [allCategory, ...data, endCategory];
+  const categories = [allCategory, ...[...data!], endCategory];
 
   return (
     <nav id='navHeader' className='w-full mb-6'>
@@ -55,7 +66,15 @@ export default function TabCategories({ type }: Props) {
           return (
             <Atoms.CategoryButton
               key={`cate-${category.id}`}
-              info={{ name: category.name, type: '' + category.id, num: 0 }}
+              info={{
+                id: category.id,
+                name: category.name,
+                num: 0,
+                selected: {
+                  category: selectedCategory,
+                  setCategory: setSelectedCategory
+                }
+              }}
               style={{ backColor: category.backColor }}
             />
           );
