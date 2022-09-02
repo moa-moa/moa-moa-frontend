@@ -1,10 +1,5 @@
-import {
-  MouseEvent as ReactMouseEvent,
-  useRef,
-  useCallback,
-  useLayoutEffect,
-  useEffect
-} from 'react';
+import useIsomophicLayoutEffect from '@/hooks/useIsomophicLayoutEffect';
+import { MouseEvent as ReactMouseEvent, useRef, useCallback } from 'react';
 
 interface Position {
   scrollLeft: number;
@@ -34,19 +29,11 @@ export default function TabCategories({ type }: Props) {
     '독서(0)',
     '기타(0)'
   ];
-  const canUseDOM = !!(
-    typeof window !== 'undefined' &&
-    typeof window.document !== 'undefined' &&
-    typeof window.document.createElement !== 'undefined'
-  );
   const uiType = type || 'slide';
   const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
-
-  const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
-
   const scrollEl = useRef<HTMLUListElement | null>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsomophicLayoutEffect(() => {
     scrollEl.current?.addEventListener('wheel', onMouseWheel, {
       passive: false
     });
