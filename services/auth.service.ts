@@ -18,9 +18,7 @@ class AuthService implements IAuthService {
 
   async googleLogin(): Promise<IToken> {
     try {
-      const { data } = await axios.get<IToken>(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/auto-login`
-      );
+      const { data } = await axios.get<IToken>('/moamoa/auth/auto-login');
       return data;
     } catch (e: Error | AxiosError | unknown) {
       if (axios.isAxiosError(e)) {
