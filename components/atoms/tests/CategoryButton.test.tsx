@@ -5,9 +5,17 @@ import userEvent from '@testing-library/user-event';
 const CATEGORIES = {
   ALL: {
     info: {
-      type: 'all',
+      id: -1,
       name: '전체',
-      num: 7
+      num: 7,
+      selected: {
+        category: {
+          id: -1,
+          name: '전체',
+          backColor: '#333333'
+        },
+        setCategory: jest.fn()
+      }
     },
     style: {
       backColor: '#333333'
@@ -28,27 +36,19 @@ describe('<CategoryButton>', () => {
     expect(categoryButton).toBeInTheDocument();
     expect(categoryButton).toHaveTextContent('전체 (7)');
     expect(categoryButton).toHaveStyle({
-      backgroundColor: 'rgb(255, 255, 255)'
+      color: 'rgb(255, 255, 255)'
     });
-    expect(categoryButton).toHaveStyle({ color: 'rgb(34, 34, 34)' });
-    expect(categoryButton).toHaveStyle({
-      fontWeight: 'normal'
-    });
-
-    await userEvent.hover(categoryButton);
-    expect(categoryButton).toHaveStyle({ backgroundColor: 'rgb(51, 51, 51)' });
-    expect(categoryButton).toHaveStyle({ color: 'rgb(255, 255, 255)' });
     expect(categoryButton).toHaveStyle({
       fontWeight: 'bold'
     });
+    expect(categoryButton).toHaveStyle({ backgroundColor: 'rgb(51, 51, 51)' });
+
+    await userEvent.hover(categoryButton);
+    expect(categoryButton).toHaveStyle({ opacity: 0.7 });
 
     await userEvent.unhover(categoryButton);
     expect(categoryButton).toHaveStyle({
-      backgroundColor: 'rgb(255, 255, 255)'
-    });
-    expect(categoryButton).toHaveStyle({ color: 'rgb(34, 34, 34)' });
-    expect(categoryButton).toHaveStyle({
-      fontWeight: 'normal'
+      opacity: 1
     });
   });
 });
