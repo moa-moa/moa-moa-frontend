@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: '/moamoa/:path*',
-        destination: 'http://localhost:3000/:path*'
+        destination: `${process.env.NEXT_PUBLIC_BASE_URL}/:path*`
       }
     ];
   },
