@@ -12,8 +12,6 @@ describe('<LoginButton/>', () => {
 
     expect(loginButton).toBeInTheDocument();
     expect(loginButton).toHaveTextContent('골라라 구글 계정으로 로그인');
-    expect(loginButton.getAttribute('href')).toBe(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`
-    );
+    expect(loginButton.getAttribute('href')).toBe('/moamoa/auth/google');
   });
 });
