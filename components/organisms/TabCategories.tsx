@@ -1,5 +1,6 @@
 import useSwiper from '@/hooks/useSwiper';
 import { ICategory } from '@/models/interfaces/data/Category';
+import CategoriesService from '@/services/categories.service';
 import { useState } from 'react';
 import Atoms from '../atoms';
 
@@ -12,15 +13,11 @@ interface Props {
   };
 }
 
-const allCategory = { id: -1, name: '전체', backColor: '#333333' };
-const endCategory = { id: -2, name: '종료', backColor: '#777777' };
-
 export default function TabCategories({
   type,
   info: { data, isLoading, isError }
 }: Props) {
-  const [selectedCategory, setSelectedCategory] =
-    useState<ICategory>(allCategory);
+  const [selectedId, setSelectedId] = useState<number>(-1);
   const uiType = type || 'slide';
   const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
   const ref = useSwiper({ dependencies: [data] });
@@ -53,7 +50,7 @@ export default function TabCategories({
     );
   }
 
-  const categories = [allCategory, ...[...data!], endCategory];
+  const categories = CategoriesService.convertWithAllandEnd(data || []);
 
   return (
     <nav id='navHeader' className='w-full mb-6'>
@@ -70,12 +67,10 @@ export default function TabCategories({
                 id: category.id,
                 name: category.name,
                 num: 0,
-                selected: {
-                  category: selectedCategory,
-                  setCategory: setSelectedCategory
-                }
+                isActive: category.id === selectedId
               }}
               style={{ backColor: category.backColor }}
+              onClick={() => setSelectedId(category.id)}
             />
           );
         })}

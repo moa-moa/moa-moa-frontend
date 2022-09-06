@@ -5,11 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 export default function useCategories() {
   const response = useQuery(['categories'], CategoriesService.getCategories, {
     retry: false,
-    refetchOnWindowFocus: false,
-    enabled: !!AuthService.accessToken,
-    onSuccess: (data) => {
-      console.log('data!', data);
-    }
+    refetchOnWindowFocus: true,
+    staleTime: 3000,
+    keepPreviousData: true,
+    enabled: !!AuthService.accessToken
   });
 
   return response;
