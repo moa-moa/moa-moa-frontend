@@ -7,10 +7,18 @@ export default function useNavigationGuard() {
   const response = useQuery(['auth'], AuthService.googleLogin, {
     retry: false,
     refetchOnWindowFocus: false,
+    enabled: !AuthService.accessToken,
     onSuccess: (data) => {
       AuthService.setAccessToken(data.accessToken);
+      AuthService.refreshLogin(response.refetch);
     },
-    onError: (error) => {
+    onError: async (error: { status: number; message: string }) => {
+      const status = error.status;
+      if (status === 401) {
+        if (AuthService.accessToken) {
+          await AuthService.logout();
+        }
+      }
       router.replace('/login');
     }
   });
