@@ -1,7 +1,6 @@
 import useSwiper from '@/hooks/useSwiper';
 import { ICategory } from '@/models/interfaces/data/Category';
 import CategoriesService from '@/services/categories.service';
-import { useState } from 'react';
 import Atoms from '../atoms';
 
 interface Props {
@@ -11,13 +10,21 @@ interface Props {
     isLoading: boolean;
     isError: boolean;
   };
+  options?: {
+    withAllandEnd?: boolean;
+    displayClubsNum?: boolean;
+    selected?: {
+      id: number;
+      set: (id: number) => void;
+    };
+  };
 }
 
 export default function TabCategories({
   type,
-  info: { data, isLoading, isError }
+  info: { data, isLoading, isError },
+  options
 }: Props) {
-  const [selectedId, setSelectedId] = useState<number>(-1);
   const uiType = type || 'slide';
   const wrapStyle = uiType === 'slide' ? '' : ' flex-wrap';
   const ref = useSwiper({ dependencies: [data] });
@@ -50,7 +57,9 @@ export default function TabCategories({
     );
   }
 
-  const categories = CategoriesService.convertWithAllandEnd(data || []);
+  const categories = options?.withAllandEnd
+    ? CategoriesService.convertWithAllandEnd(data!)
+    : data!;
 
   return (
     <nav id='navHeader' className='w-full mb-6'>
@@ -67,10 +76,11 @@ export default function TabCategories({
                 id: category.id,
                 name: category.name,
                 num: 0,
-                isActive: category.id === selectedId
+                isActive: category.id === (options?.selected?.id ?? false),
+                displayClubsNum: options?.displayClubsNum
               }}
               style={{ backColor: category.backColor }}
-              onClick={() => setSelectedId(category.id)}
+              onClick={() => options?.selected?.set(category.id)}
             />
           );
         })}
