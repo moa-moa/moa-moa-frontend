@@ -24,7 +24,8 @@ function getClubs(): IClub[] {
       category: {
         id: 1,
         name: '점심',
-        backColor: '#F178B6'
+        backColor: '#F178B6',
+        Club: []
       },
       userJoinedClub: [
         {
@@ -49,7 +50,8 @@ function getClubs(): IClub[] {
       category: {
         id: 1,
         name: '점심',
-        backColor: '#F178B6'
+        backColor: '#F178B6',
+        Club: []
       },
       userJoinedClub: [
         {
@@ -74,7 +76,8 @@ function getClubs(): IClub[] {
       category: {
         id: 1,
         name: '점심',
-        backColor: '#F178B6'
+        backColor: '#F178B6',
+        Club: []
       },
       userJoinedClub: [
         {
