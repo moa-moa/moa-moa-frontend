@@ -15,6 +15,7 @@ import Icons from '../icons';
 import { isMobile } from 'react-device-detect';
 import useIsomorphicLayoutEffect from '@/hooks/useIsomophicLayoutEffect';
 import usePrevious from '@/hooks/usePrevious';
+import useCategories from '@/hooks/useCategories';
 
 interface NestedValues {
   title: string;
@@ -53,7 +54,13 @@ export default function RenewClub() {
       minLength: 1
     }
   });
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
   const [draggable, setDraggable] = useState(false);
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+    isError: isErrorCategories
+  } = useCategories();
 
   const dragged: any = useRef({
     desktop: {
@@ -410,7 +417,21 @@ export default function RenewClub() {
 
   return (
     <Layout.RenewClub>
-      <Organisms.TabCategories type='wrap' />
+      <Organisms.TabCategories
+        type='wrap'
+        info={{
+          data: categories,
+          isLoading: isLoadingCategories,
+          isError: isErrorCategories
+        }}
+        options={{
+          displayClubsNum: false,
+          selected: {
+            id: selectedCategoryId,
+            set: (id: number) => setSelectedCategoryId(id)
+          }
+        }}
+      />
       <form onSubmit={handleSubmit(onSubmit)} className='px-4'>
         <section className='form-group mb-2.5'>
           <input
