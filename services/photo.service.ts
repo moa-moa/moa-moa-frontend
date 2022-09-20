@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { IPhoto } from '@/models/interfaces/data/Photo';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import AuthService from './auth.service';
 
 class PhotoService {
@@ -6,7 +7,7 @@ class PhotoService {
     // To do
   }
 
-  async uploadClubPhoto(files: FileList) {
+  async uploadClubPhoto(files: FileList): Promise<AxiosResponse<IPhoto[]>> {
     try {
       if (!AuthService.accessToken) {
         throw {
