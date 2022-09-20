@@ -1,5 +1,6 @@
+import useCategories from '@/hooks/useCategories';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import Organisms from '.';
 import Atoms from '../atoms';
@@ -13,6 +14,9 @@ const defaultValues: ClubFormValues = {
 };
 
 export default function ClubForm() {
+  const { data, isLoading, isError } = useCategories();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
+
   const {
     register,
     handleSubmit,
@@ -71,7 +75,16 @@ export default function ClubForm() {
 
   return (
     <>
-      <Organisms.TabCategories type='wrap' />
+      <Organisms.TabCategories
+        type='wrap'
+        info={{ data, isLoading, isError }}
+        options={{
+          selected: {
+            id: selectedCategoryId,
+            set: (id: number) => setSelectedCategoryId(id)
+          }
+        }}
+      />
       <form onSubmit={handleSubmit(onSubmit)} className='px-4 pb-[3.75rem]'>
         <section className='form-group mb-2.5'>
           <Atoms.TitleInput ref={inputTitle.ref} setValue={setValue} />
