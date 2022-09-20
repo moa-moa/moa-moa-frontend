@@ -1,5 +1,9 @@
 import useCategories from '@/hooks/useCategories';
+import { IClubBody } from '@/models/interfaces/data/Club';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
+import ClubService from '@/services/club.service';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import Organisms from '.';
@@ -7,6 +11,7 @@ import Atoms from '../atoms';
 import Molecules from '../molecules';
 
 const defaultValues: ClubFormValues = {
+  category: 0,
   title: '',
   description: '',
   max: Infinity,
@@ -14,8 +19,20 @@ const defaultValues: ClubFormValues = {
 };
 
 export default function ClubForm() {
+  const router = useRouter();
   const { data, isLoading, isError } = useCategories();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
+  const createClub = useMutation(ClubService.create, {
+    cacheTime: 0,
+    retry: false,
+    onSuccess: () => {
+      // To Do: create Toast Navigation
+      router.push('/');
+    },
+    onError: (error) => {
+      console.log('클럽 생성 실패!');
+      console.log(error);
+    }
+  });
 
   const {
     register,
@@ -23,9 +40,20 @@ export default function ClubForm() {
     setValue,
     getValues,
     control,
-    formState,
     formState: { errors, isValid }
   } = useForm({ defaultValues });
+
+  const inputCategory = register('category', {
+    required: true,
+    validate: {
+      isValid: (v) => {
+        if (data) {
+          return !!data.find(({ id }) => id === v);
+        }
+        return false;
+      }
+    }
+  });
 
   const inputTitle = register('title', {
     required: true,
@@ -35,6 +63,7 @@ export default function ClubForm() {
       }
     }
   });
+
   const inputDescription = register('description', {
     required: true,
     validate: {
@@ -63,25 +92,38 @@ export default function ClubForm() {
   });
 
   const onSubmit = useCallback(
-    (data: any) => {
-      console.log(formState);
-      console.log(control);
-      console.log(isValid);
-      console.log(errors);
-      console.log(data);
+    (data: ClubFormValues) => {
+      const body: IClubBody = {
+        categoryId: data.category,
+        title: data.title,
+        description: data.description,
+        max: data.max,
+        imageIds: data.images.map((image) => image.id)
+      };
+      createClub.mutate(body);
     },
     [isValid]
   );
 
   return (
     <>
+      {createClub.isLoading && (
+        <Atoms.Loading message={'클럽 생성중입니다. 잠시만 기다려주세요.'} />
+      )}
       <Organisms.TabCategories
         type='wrap'
         info={{ data, isLoading, isError }}
         options={{
+          displayClubsNum: false,
           selected: {
-            id: selectedCategoryId,
-            set: (id: number) => setSelectedCategoryId(id)
+            id: getValues('category'),
+            set: (id: number) => {
+              setValue('category', id, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+              });
+            }
           }
         }}
       />
