@@ -19,7 +19,7 @@ const Create: NextPage = () => {
   const { isLoading, isError } = useNavigationGuard();
 
   if (isLoading || isError) {
-    return <div>loading...</div>;
+    return <></>;
   }
 
   return <Pages.CreateClub />;

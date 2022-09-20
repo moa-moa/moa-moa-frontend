@@ -8,6 +8,7 @@ import DescriptionTextArea from './DescriptionTextArea';
 import SelectInfinityButton from './SelectInfinityButton';
 import ControlPeopleButton from './ControlPeopleButton';
 import Photos from './Photos';
+import CategoryButton from './CategoryButton';
 
 export default {
   Badge,
@@ -19,5 +20,6 @@ export default {
   DescriptionTextArea,
   SelectInfinityButton,
   ControlPeopleButton,
-  Photos
+  Photos,
+  CategoryButton
 };
