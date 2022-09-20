@@ -3,11 +3,21 @@ import GnbItem from './GnbItem';
 import Avatar from './Avatar';
 import CreateClubButton from './CreateClubButton';
 import LoginButton from './LoginButton';
+import TitleInput from './TitleInput';
+import DescriptionTextArea from './DescriptionTextArea';
+import SelectInfinityButton from './SelectInfinityButton';
+import ControlPeopleButton from './ControlPeopleButton';
+import Photos from './Photos';
 
 export default {
   Badge,
   GnbItem,
   Avatar,
   CreateClubButton,
-  LoginButton
+  LoginButton,
+  TitleInput,
+  DescriptionTextArea,
+  SelectInfinityButton,
+  ControlPeopleButton,
+  Photos
 };
