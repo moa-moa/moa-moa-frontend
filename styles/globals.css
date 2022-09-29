@@ -41,3 +41,43 @@
     transform: translateX(100%);
   }
 }
+
+.toast {
+  animation: fadeIn 0.7s cubic-bezier(0.36, -0.64, 0.34, 1.76);
+  transition: all 0.7s cubic-bezier(0.36, -0.64, 0.34, 1.76);
+  transform: rotateX(-90deg) translateY(-10px);
+  opacity: 0;
+  height: 0;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: none;
+  height: 52px;
+}
+
+.toast-out {
+  animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+}
