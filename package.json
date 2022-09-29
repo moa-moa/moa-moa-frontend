@@ -23,6 +23,7 @@
     "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.34.0",
+    "recoil": "^0.7.5",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
