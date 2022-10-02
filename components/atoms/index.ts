@@ -10,6 +10,7 @@ import ControlPeopleButton from './ControlPeopleButton';
 import Photos from './Photos';
 import CategoryButton from './CategoryButton';
 import Loading from './Loading';
+import Toast from './Toast';
 
 export default {
   Badge,
@@ -23,5 +24,6 @@ export default {
   ControlPeopleButton,
   Photos,
   CategoryButton,
-  Loading
+  Loading,
+  Toast
 };

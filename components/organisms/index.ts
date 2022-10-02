@@ -5,6 +5,7 @@ import TabCategories from './TabCategories';
 import AvailableClubs from './AvailableClubs';
 import UnAvailableClubs from './UnAvailableClubs';
 import ClubForm from './ClubForm';
+import ToastNavigator from './ToastNavigator';
 
 export default {
   Header,
@@ -13,5 +14,6 @@ export default {
   TabCategories,
   AvailableClubs,
   UnAvailableClubs,
-  ClubForm
+  ClubForm,
+  ToastNavigator
 };
