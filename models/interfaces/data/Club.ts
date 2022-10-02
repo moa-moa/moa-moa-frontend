@@ -13,3 +13,12 @@ export interface IClub {
   userJoinedClub: IUser[];
   userCreatedClub?: IUser[];
 }
+
+export interface IClubBody {
+  categoryId: number;
+  title: string;
+  description: string;
+  owner?: string;
+  max: number;
+  imageIds?: string[];
+}

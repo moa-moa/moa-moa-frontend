@@ -42,6 +42,25 @@
   }
 }
 
+.loading .moa:first-child {
+  animation: ping 2s 0.5s infinite ease-in-out;
+}
+
+.loading .moa:last-child {
+  animation: ping 2s 1s infinite ease-in-out;
+}
+
+@keyframes ping {
+  0%,
+  20%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  10% {
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
 .toast {
   animation: fadeIn 0.7s cubic-bezier(0.36, -0.64, 0.34, 1.76);
   transition: all 0.7s cubic-bezier(0.36, -0.64, 0.34, 1.76);

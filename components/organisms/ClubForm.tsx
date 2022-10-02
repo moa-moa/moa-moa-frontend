@@ -1,0 +1,174 @@
+import useCategories from '@/hooks/useCategories';
+import { IClubBody } from '@/models/interfaces/data/Club';
+import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
+import ClubService from '@/services/club.service';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import Organisms from '.';
+import Atoms from '../atoms';
+import Molecules from '../molecules';
+
+const defaultValues: ClubFormValues = {
+  category: 0,
+  title: '',
+  description: '',
+  max: Infinity,
+  images: []
+};
+
+export default function ClubForm() {
+  const router = useRouter();
+  const { data, isLoading, isError } = useCategories();
+  const createClub = useMutation(ClubService.create, {
+    cacheTime: 0,
+    retry: false,
+    onSuccess: () => {
+      // To Do: create Toast Navigation
+      router.push('/');
+    },
+    onError: (error) => {
+      console.log('클럽 생성 실패!');
+      console.log(error);
+    }
+  });
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    control,
+    formState: { errors, isValid }
+  } = useForm({ defaultValues });
+
+  const inputCategory = register('category', {
+    required: true,
+    validate: {
+      isValid: (v) => {
+        if (data) {
+          return !!data.find(({ id }) => id === v);
+        }
+        return false;
+      }
+    }
+  });
+
+  const inputTitle = register('title', {
+    required: true,
+    validate: {
+      empty: (v) => {
+        return !!v;
+      }
+    }
+  });
+
+  const inputDescription = register('description', {
+    required: true,
+    validate: {
+      empty: (v) => {
+        return !!v;
+      }
+    }
+  });
+  const inputMax = register('max', { required: true, min: 1, max: Infinity });
+
+  const inputImages = register('images', {
+    required: false
+  });
+
+  const {
+    fields: photos,
+    append: addImage,
+    remove: removeImage,
+    swap: swapImage
+  } = useFieldArray({
+    control: control,
+    name: 'images',
+    rules: {
+      minLength: 1
+    }
+  });
+
+  const onSubmit = useCallback(
+    (data: ClubFormValues) => {
+      const body: IClubBody = {
+        categoryId: data.category,
+        title: data.title,
+        description: data.description,
+        max: data.max,
+        imageIds: data.images.map((image) => image.id)
+      };
+      createClub.mutate(body);
+    },
+    [isValid]
+  );
+
+  return (
+    <>
+      {createClub.isLoading && (
+        <Atoms.Loading message={'클럽 생성중입니다. 잠시만 기다려주세요.'} />
+      )}
+      <Organisms.TabCategories
+        type='wrap'
+        info={{ data, isLoading, isError }}
+        options={{
+          displayClubsNum: false,
+          selected: {
+            id: getValues('category'),
+            set: (id: number) => {
+              setValue('category', id, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+              });
+            }
+          }
+        }}
+      />
+      <form onSubmit={handleSubmit(onSubmit)} className='px-4 pb-[3.75rem]'>
+        <section className='form-group mb-2.5'>
+          <Atoms.TitleInput ref={inputTitle.ref} setValue={setValue} />
+        </section>
+
+        <section className='form-group mb-2.5 h-44'>
+          <Atoms.DescriptionTextArea
+            ref={inputDescription.ref}
+            setValue={setValue}
+          />
+        </section>
+
+        <section className='form-group flex justify-center items-center gap-2 mb-5'>
+          <Molecules.SelectMaxPeople
+            getValues={getValues}
+            setValue={setValue}
+          />
+        </section>
+
+        <section className='form-group'>
+          <Molecules.UploadPhotos
+            photos={photos}
+            inputImages={inputImages}
+            addImage={addImage}
+            removeImage={removeImage}
+            swapImage={swapImage}
+          />
+        </section>
+
+        <section className='form-group fixed left-0 bottom-0 w-screen h-nav md:max-w-5xl md:mx-auto md:left-1/2 md:-translate-x-1/2'>
+          <button
+            type='submit'
+            className='w-full h-full bg-disabled text-base'
+            disabled={!isValid}
+            style={{
+              backgroundColor: isValid ? '#ee2554' : '#EEEEEE',
+              color: isValid ? '#fff' : '#AAAAAA'
+            }}>
+            등록
+          </button>
+        </section>
+      </form>
+    </>
+  );
+}

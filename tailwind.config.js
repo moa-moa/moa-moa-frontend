@@ -18,7 +18,8 @@ module.exports = {
         disabled: '#EEEEEE',
         lunch: '#F178B6',
         gray: '#999999',
-        'moa-pink': '#ee2554'
+        'moa-pink': '#ee2554',
+        'loading-bg': 'rgba(0, 0, 0, 0.7)'
       }
     }
   },
