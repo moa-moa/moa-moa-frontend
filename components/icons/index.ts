@@ -18,6 +18,9 @@ import WClose from './WClose';
 import Move from './Move';
 import Photo from './Photo';
 import Google from './Google';
+import ToastInfo from './ToastInfo';
+import ToastConfirm from './ToastConfirm';
+import ToastClose from './ToastClose';
 
 export default {
   Logo,
@@ -39,5 +42,8 @@ export default {
   WClose,
   Move,
   Photo,
-  Google
+  Google,
+  ToastInfo,
+  ToastConfirm,
+  ToastClose
 };
