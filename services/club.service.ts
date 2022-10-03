@@ -16,6 +16,23 @@ class ClubService {
       throw new Error('Something went wrong');
     }
   }
+
+  async get() {
+    try {
+      const { data } = await axios.get<IClub[]>(
+        '/moamoa/club?joinedUser=true&likedUser=true',
+        {
+          headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+        }
+      );
+      return data;
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(e.message);
+      }
+      throw new Error('Something went wrong');
+    }
+  }
 }
 
 export default new ClubService();
