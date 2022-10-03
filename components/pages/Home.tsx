@@ -2,7 +2,7 @@ import Layout from '@/components/templates';
 import Organisms from '../organisms';
 import Atoms from '../atoms';
 import Modal from '../atoms/Modal';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import useCategories from '@/hooks/useCategories';
 import { useState } from 'react';
 import Icons from '../icons';
@@ -24,7 +24,7 @@ export default function Home() {
           }
         }}
       />
-      <section className='px-4'>
+      <section className='px-4 pb-[3.75rem]'>
         <Organisms.ClubList />
       </section>
       <Atoms.CreateClubButton />
