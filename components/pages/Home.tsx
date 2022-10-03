@@ -25,8 +25,7 @@ export default function Home() {
         }}
       />
       <section className='px-4'>
-        {/* <Organisms.AvailableClubs />
-        <Organisms.UnAvailableClubs /> */}
+        <Organisms.ClubList />
       </section>
       <Atoms.CreateClubButton />
       <Modal isOpen={asPath.split('#')[1] === 'createClubModal'}>
