@@ -1,11 +1,20 @@
+import ClubService from '@/services/club.service';
+import { useQuery } from '@tanstack/react-query';
+import Molecules from '../molecules';
+
 export default function ClubList() {
+  const { isLoading, isError, data } = useQuery(['clubList'], ClubService.get);
+
+  if (isLoading || isError) {
+    return <Skeleton />;
+  }
+
   return (
-    // <ul>
-    //   <li>클럽 리스트</li>
-    // </ul>
-    <>
-      <Skeleton />
-    </>
+    <ul>
+      {data!.map((club) => (
+        <Molecules.ClubItem key={club.id} {...club} />
+      ))}
+    </ul>
   );
 }
 
