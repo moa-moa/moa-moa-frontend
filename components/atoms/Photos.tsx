@@ -284,12 +284,12 @@ export default function Photos({ photos, onDeletePhoto, swapImage }: Props) {
 
   return (
     <>
-      {photos.map(({ id, path }, index, total) => (
+      {photos.map(({ id, imagePath }, index, total) => (
         <section
           key={id}
           className='club-image w-full pb-[100%] h-0 bg-blue-500 rounded-[0.3125rem] relative flex justify-center items-center touch-none'
           style={{
-            backgroundImage: `url("${process.env.NEXT_PUBLIC_BASE_URL}/${path}")`,
+            backgroundImage: `url("${process.env.NEXT_PUBLIC_BASE_URL}/${imagePath}")`,
             backgroundPosition: 'center center',
             backgroundSize: 'cover'
           }}
