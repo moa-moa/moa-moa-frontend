@@ -1,14 +1,19 @@
 import useCategories from '@/hooks/useCategories';
+import useToasts from '@/hooks/useToasts';
 import { IClubBody } from '@/models/interfaces/data/Club';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import ClubService from '@/services/club.service';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import Organisms from '.';
 import Atoms from '../atoms';
 import Molecules from '../molecules';
+
+interface Props {
+  isModal?: boolean;
+}
 
 const defaultValues: ClubFormValues = {
   category: 0,
@@ -18,14 +23,16 @@ const defaultValues: ClubFormValues = {
   images: []
 };
 
-export default function ClubForm() {
+export default function ClubForm({ isModal }: Props) {
   const router = useRouter();
   const { data, isLoading, isError } = useCategories();
+  const { addToast } = useToasts();
   const createClub = useMutation(ClubService.create, {
     cacheTime: 0,
     retry: false,
     onSuccess: () => {
       // To Do: create Toast Navigation
+      addToast('success', '클럽 생성이 완료되었습니다.');
       router.push('/');
     },
     onError: (error) => {
@@ -127,7 +134,9 @@ export default function ClubForm() {
           }
         }}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className='px-4 pb-[3.75rem]'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`px-4 ${isModal ? '' : 'pb-[3.75rem]'}`}>
         <section className='form-group mb-2.5'>
           <Atoms.TitleInput ref={inputTitle.ref} setValue={setValue} />
         </section>
@@ -156,7 +165,12 @@ export default function ClubForm() {
           />
         </section>
 
-        <section className='form-group fixed left-0 bottom-0 w-screen h-nav md:max-w-5xl md:mx-auto md:left-1/2 md:-translate-x-1/2'>
+        <section
+          className={`form-group ${
+            isModal
+              ? 'mt-5'
+              : 'fixed left-0 bottom-0 md:max-w-5xl md:mx-auto md:left-1/2 md:-translate-x-1/2 w-screen'
+          } h-nav`}>
           <button
             type='submit'
             className='w-full h-full bg-disabled text-base'
