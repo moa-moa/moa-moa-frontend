@@ -8,10 +8,17 @@ export interface IClub {
   owner: string;
   isAvailable: boolean;
   max: number;
-  category: ICategory;
-  userLikedClub?: IUser[];
-  userJoinedClub: IUser[];
-  userCreatedClub?: IUser[];
+  categoryId: number;
+  UserLikedClub: {
+    User: IUser;
+    clubId: number;
+    userId: string;
+  }[];
+  UserJoinedClub: {
+    User: IUser;
+    clubId: number;
+    userId: string;
+  }[];
 }
 
 export interface IClubBody {
