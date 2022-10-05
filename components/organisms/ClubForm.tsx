@@ -2,7 +2,7 @@ import useToasts from '@/hooks/useToasts';
 import { IClubBody } from '@/models/interfaces/data/Club';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import ClubService from '@/services/club.service';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -26,6 +26,7 @@ const defaultValues: ClubFormValues = {
 
 export default function ClubForm({ isModal }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const categories = useRecoilValue(categoryStates);
   const { addToast } = useToasts();
   const createClub = useMutation(ClubService.create, {
@@ -34,6 +35,7 @@ export default function ClubForm({ isModal }: Props) {
     onSuccess: () => {
       // To Do: create Toast Navigation
       addToast('success', '클럽 생성이 완료되었습니다.');
+      queryClient.invalidateQueries(['clubList']);
       router.push('/');
     },
     onError: (error) => {
