@@ -23,8 +23,12 @@ export default function ClubList({
     if (selectedCategoryId > 0) {
       return clubs.filter((club) => club.categoryId === selectedCategoryId);
     }
-    return clubs;
-  }, [selectedCategoryId]);
+
+    if (selectedCategoryId === -1) {
+      return clubs;
+    }
+    return [];
+  }, [selectedCategoryId, clubs]);
 
   return (
     <ul className='flex flex-col gap-[0.625rem]'>
