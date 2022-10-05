@@ -89,6 +89,5 @@ function Toast({ id, type, message, index }: Props) {
 }
 
 export default React.memo(Toast, (prev, next) => {
-  console.log(prev, next);
   return !(prev.id === next.id);
 });
