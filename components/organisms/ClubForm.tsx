@@ -36,6 +36,7 @@ export default function ClubForm({ isModal }: Props) {
       // To Do: create Toast Navigation
       addToast('success', '클럽 생성이 완료되었습니다.');
       queryClient.invalidateQueries(['clubList']);
+      queryClient.invalidateQueries(['categories']);
       router.push('/');
     },
     onError: (error) => {
