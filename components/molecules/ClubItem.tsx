@@ -44,7 +44,7 @@ export default function ClubItem({
             <section className='flex'>
               <Icons.People />
               <div className='ml-1 text-sm text-gray'>
-                {joined.length} / {max}
+                {joined.length} / {max || '∞'}
               </div>
             </section>
           </section>
