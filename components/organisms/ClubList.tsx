@@ -1,17 +1,34 @@
-import ClubService from '@/services/club.service';
-import { useQuery } from '@tanstack/react-query';
+import { IClub } from '@/models/interfaces/data/Club';
+import { useMemo } from 'react';
 import Molecules from '../molecules';
 
-export default function ClubList() {
-  const { isLoading, isError, data } = useQuery(['clubList'], ClubService.get);
+interface Props {
+  clubs: IClub[];
+  isLoading: boolean;
+  isError: boolean;
+  selectedCategoryId: number;
+}
 
+export default function ClubList({
+  clubs,
+  isLoading,
+  isError,
+  selectedCategoryId
+}: Props) {
   if (isLoading || isError) {
     return <Skeleton />;
   }
 
+  const clubList = useMemo(() => {
+    if (selectedCategoryId > 0) {
+      return clubs.filter((club) => club.categoryId === selectedCategoryId);
+    }
+    return clubs;
+  }, [selectedCategoryId]);
+
   return (
-    <ul>
-      {data!.map((club) => (
+    <ul className='flex flex-col gap-[0.625rem]'>
+      {clubList!.map((club) => (
         <Molecules.ClubItem key={club.id} {...club} />
       ))}
     </ul>
