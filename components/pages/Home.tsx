@@ -2,20 +2,27 @@ import Layout from '@/components/templates';
 import Organisms from '../organisms';
 import Atoms from '../atoms';
 import Modal from '../atoms/Modal';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import useCategories from '@/hooks/useCategories';
 import { useState } from 'react';
 import Icons from '../icons';
+import ClubService from '@/services/club.service';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Home() {
   const { asPath, push } = useRouter();
-  const { data, isLoading, isError } = useCategories();
+  const categories = useCategories();
+  const clubs = useQuery(['clubList'], ClubService.get);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
 
   return (
     <Layout.Nested>
       <Organisms.TabCategories
-        info={{ data, isLoading, isError }}
+        info={{
+          data: categories.data,
+          isLoading: categories.isLoading,
+          isError: categories.isError
+        }}
         options={{
           withAllandEnd: true,
           selected: {
@@ -24,9 +31,13 @@ export default function Home() {
           }
         }}
       />
-      <section className='px-4'>
-        <Organisms.AvailableClubs />
-        <Organisms.UnAvailableClubs />
+      <section className='px-4 pb-[3.75rem]'>
+        <Organisms.ClubList
+          clubs={clubs.data || []}
+          isLoading={clubs.isLoading || categories.isLoading}
+          isError={clubs.isError}
+          selectedCategoryId={selectedCategoryId}
+        />
       </section>
       <Atoms.CreateClubButton />
       <Modal isOpen={asPath.split('#')[1] === 'createClubModal'}>

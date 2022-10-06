@@ -1,4 +1,4 @@
-import Badge from './Badge';
+import CategoryBadge from './CategoryBadge';
 import GnbItem from './GnbItem';
 import Avatar from './Avatar';
 import CreateClubButton from './CreateClubButton';
@@ -11,9 +11,11 @@ import Photos from './Photos';
 import CategoryButton from './CategoryButton';
 import Loading from './Loading';
 import Toast from './Toast';
+import OwnerBadge from './OwnerBadge';
 
 export default {
-  Badge,
+  CategoryBadge,
+  OwnerBadge,
   GnbItem,
   Avatar,
   CreateClubButton,

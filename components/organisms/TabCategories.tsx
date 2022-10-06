@@ -75,7 +75,7 @@ export default function TabCategories({
               info={{
                 id: category.id,
                 name: category.name,
-                num: 0,
+                num: category.Club.length || 0,
                 isActive: category.id === (options?.selected?.id ?? false),
                 displayClubsNum: options?.displayClubsNum
               }}

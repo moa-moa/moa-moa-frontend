@@ -19,7 +19,7 @@ export default function Avatar({ name, size, image, isAvailable }: Props) {
 
   return (
     <div
-      className='rounded-full flex justify-center items-center text-sm text-white fony-bold overflow-hidden border border-light-gray relative'
+      className='rounded-full flex justify-center items-center text-sm text-white fony-bold overflow-hidden border border-white relative'
       style={style}>
       {image ? (
         <Image

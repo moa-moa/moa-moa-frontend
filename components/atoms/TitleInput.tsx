@@ -1,4 +1,3 @@
-import { IPhoto } from '@/models/interfaces/data/Photo';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import React from 'react';
 import { UseFormSetValue } from 'react-hook-form';

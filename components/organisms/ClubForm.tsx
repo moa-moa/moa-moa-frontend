@@ -1,12 +1,13 @@
-import useCategories from '@/hooks/useCategories';
 import useToasts from '@/hooks/useToasts';
 import { IClubBody } from '@/models/interfaces/data/Club';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import ClubService from '@/services/club.service';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
+import { categoryStates } from 'store/categories';
 import Organisms from '.';
 import Atoms from '../atoms';
 import Molecules from '../molecules';
@@ -25,7 +26,8 @@ const defaultValues: ClubFormValues = {
 
 export default function ClubForm({ isModal }: Props) {
   const router = useRouter();
-  const { data, isLoading, isError } = useCategories();
+  const queryClient = useQueryClient();
+  const categories = useRecoilValue(categoryStates);
   const { addToast } = useToasts();
   const createClub = useMutation(ClubService.create, {
     cacheTime: 0,
@@ -33,6 +35,8 @@ export default function ClubForm({ isModal }: Props) {
     onSuccess: () => {
       // To Do: create Toast Navigation
       addToast('success', '클럽 생성이 완료되었습니다.');
+      queryClient.invalidateQueries(['clubList']);
+      queryClient.invalidateQueries(['categories']);
       router.push('/');
     },
     onError: (error) => {
@@ -54,8 +58,8 @@ export default function ClubForm({ isModal }: Props) {
     required: true,
     validate: {
       isValid: (v) => {
-        if (data) {
-          return !!data.find(({ id }) => id === v);
+        if (categories) {
+          return !!categories.find(({ id }) => id === v);
         }
         return false;
       }
@@ -119,7 +123,7 @@ export default function ClubForm({ isModal }: Props) {
       )}
       <Organisms.TabCategories
         type='wrap'
-        info={{ data, isLoading, isError }}
+        info={{ data: categories, isLoading: false, isError: false }}
         options={{
           displayClubsNum: false,
           selected: {

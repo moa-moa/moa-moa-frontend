@@ -1,4 +1,3 @@
-import { ICategory } from '../data/Category';
 import { IPhoto } from '../data/Photo';
 
 export interface ClubFormValues {

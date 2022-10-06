@@ -1,91 +1,59 @@
 import Icons from '../icons';
 import { IClub } from '@/models/interfaces/data/Club';
-import { BadgeType } from '@/models/types/UI/badge';
 import Atom from '../atoms';
-import { ICategory } from '@/models/interfaces/data/Category';
 import Link from 'next/link';
+import { useRecoilValue } from 'recoil';
+import { categoryStates } from 'store/categories';
+import { useMemo } from 'react';
+import Atoms from '../atoms';
 
 export default function ClubItem({
   id,
-  owner,
-  category,
-  max,
   title,
-  isAvailable,
-  userJoinedClub
+  max,
+  categoryId,
+  UserJoinedClub: joined
 }: IClub) {
-  const badges = getBadges(owner, isAvailable, category);
+  const categories = useRecoilValue(categoryStates);
+  const category = useMemo(
+    () => categories.find((cate) => cate.id === categoryId),
+    [categoryId]
+  )!;
+  const creator = joined[0].User;
 
   return (
     <li>
-      <Link href={isAvailable ? `/club/${id}` : ''}>
+      <Link href={`/club${id}`}>
         <a className='block p-5 bg-light-gray rounded-[0.3125rem]'>
-          <div className='flex items-center mb-2'>
-            <div className='flex gap-[0.3125rem] mr-2.5'>
-              {badges.map((badge) => (
-                <Atom.Badge key={badge.id} {...badge} />
-              ))}
-            </div>
+          <section className='flex items-center mb-2'>
+            <section className='flex gap-[0.3125rem] mr-2.5'>
+              <Atoms.CategoryBadge {...category} />
+              <Atoms.OwnerBadge {...creator} />
+            </section>
 
-            <ul className='flex flex-1'>
-              {userJoinedClub.map((user, index) => {
-                return (
-                  <li
-                    key={'joinUser-' + user.id}
-                    className={index ? '-ml-1' : ''}>
-                    <Atom.Avatar
-                      name={user.name}
-                      image={user.image}
-                      isAvailable={isAvailable}
-                    />
+            <section className='flex-1'>
+              <ul className='flex'>
+                {joined.map(({ User, userId }) => (
+                  <li key={userId} className='first:ml-0 -ml-1'>
+                    <Atom.Avatar name={User.name} isAvailable={true} />
                   </li>
-                );
-              })}
-            </ul>
+                ))}
+              </ul>
+            </section>
 
-            <div className='text-sm flex'>
+            <section className='flex'>
               <Icons.People />
               <div className='ml-1 text-sm text-gray'>
-                <span>{userJoinedClub.length + 1}</span>
-                <span className='mx-1'>/</span>
-                <span>{max}</span>
+                {joined.length} / {max || '∞'}
               </div>
-            </div>
-          </div>
+            </section>
+          </section>
 
-          <div>
-            <h2
-              className={
-                'font-bold text-base' + (isAvailable ? '' : ' text-gray')
-              }>
-              {title}
-            </h2>
-          </div>
+          <section>
+            <h3 className='truncate font-bold text-base'>{title}</h3>
+          </section>
         </a>
       </Link>
     </li>
   );
-}
-
-function getBadges(
-  owner: string,
-  isAvailable: boolean,
-  category: ICategory
-): BadgeType[] {
-  return [
-    {
-      id: 'badge-1',
-      type: 'category-of-club',
-      backColor: isAvailable ? category.backColor : '#CCCCCC',
-      text: category.name,
-      isAvailable
-    },
-    {
-      id: 'badge-2',
-      type: 'person',
-      backColor: isAvailable ? '#aaaaaa' : '#CCCCCC',
-      text: owner,
-      isAvailable
-    }
-  ];
 }
