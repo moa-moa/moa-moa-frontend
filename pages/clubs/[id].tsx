@@ -1,13 +1,8 @@
 import Pages from '@/components/pages';
-import Templates from '@/components/templates';
-import useCategories from '@/hooks/useCategories';
-import useClubDetail from '@/hooks/useClubDetail';
 import useNavigationGuard from '@/hooks/useNavigationGuard';
 import AuthService from '@/services/auth.service';
-import ClubService from '@/services/club.service';
-import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { GetServerSidePropsContext, NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { NextPage } from 'next';
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
