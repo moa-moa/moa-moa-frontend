@@ -1,5 +1,7 @@
+import CustomError from '@/models/classes/customError';
 import { IClub, IClubBody } from '@/models/interfaces/data/Club';
-import axios from 'axios';
+import { QueryFunctionContext, QueryKey } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import AuthService from './auth.service';
 
 class ClubService {
@@ -30,6 +32,34 @@ class ClubService {
       if (axios.isAxiosError(e)) {
         throw new Error(e.message);
       }
+      throw new Error('Something went wrong');
+    }
+  }
+
+  async getDetail(context: QueryFunctionContext<[string, number]>) {
+    const {
+      queryKey: [_, clubId]
+    } = context;
+    try {
+      if (clubId <= 0) {
+        const customError = new CustomError(404, 'not Found Club Data');
+        throw customError;
+      }
+
+      const { data } = await axios.get<IClub>(`/moamoa/club/${clubId}`, {
+        headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+      });
+
+      return data;
+    } catch (e: AxiosError | CustomError | unknown) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(e.message);
+      }
+
+      if (e instanceof CustomError) {
+        throw e.message;
+      }
+
       throw new Error('Something went wrong');
     }
   }
