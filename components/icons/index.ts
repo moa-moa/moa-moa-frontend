@@ -24,6 +24,7 @@ import ToastClose from './ToastClose';
 import Back from './Back';
 import LikeOn from './LikeOn';
 import LikeOff from './LikeOff';
+import CircleCrown from './CircleCrown';
 
 export default {
   Logo,
@@ -51,5 +52,6 @@ export default {
   ToastClose,
   Back,
   LikeOn,
-  LikeOff
+  LikeOff,
+  CircleCrown
 };
