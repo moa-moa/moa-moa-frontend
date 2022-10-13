@@ -1,4 +1,3 @@
-import { ICategory } from './Category';
 import { IUser } from './User';
 
 export interface IClub {
