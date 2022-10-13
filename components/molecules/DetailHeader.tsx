@@ -55,8 +55,6 @@ export default function DetailHeader() {
     }
   });
 
-  const onBack = () => {};
-
   return (
     <header className='sticky top-0 left-0 w-full h-header'>
       <section className='max-w-5xl w-full h-full mx-auto relative'>
