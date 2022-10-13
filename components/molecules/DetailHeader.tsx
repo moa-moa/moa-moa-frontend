@@ -37,10 +37,6 @@ export default function DetailHeader() {
   }, [owner]);
 
   const onLikeClub = useCallback(() => {
-    if (isLiked) {
-      console.log('좋아요 취소');
-      return;
-    }
     likeClub.mutate(clubId);
   }, [isLiked]);
 
@@ -51,7 +47,10 @@ export default function DetailHeader() {
       queryClient.invalidateQueries(['clubList']);
       queryClient.invalidateQueries(['categories']);
       queryClient.invalidateQueries(['clubDetail', clubId]);
-      addToast('success', '해당 클럽 찜하기가 완료되었습니다.');
+      addToast(
+        'success',
+        `해당 클럽 찜하기가 ${isLiked ? '취소' : '완료'}되었습니다.`
+      );
     }
   });
 
