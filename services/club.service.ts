@@ -1,6 +1,6 @@
 import CustomError from '@/models/classes/customError';
 import { IClub, IClubBody } from '@/models/interfaces/data/Club';
-import { QueryFunctionContext, QueryKey } from '@tanstack/react-query';
+import { QueryFunctionContext } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import AuthService from './auth.service';
 
@@ -49,6 +49,35 @@ class ClubService {
       const { data } = await axios.get<IClub>(`/moamoa/club/${clubId}`, {
         headers: { Authorization: `Bearer ${AuthService.accessToken}` }
       });
+
+      return data;
+    } catch (e: AxiosError | CustomError | unknown) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(e.message);
+      }
+
+      if (e instanceof CustomError) {
+        throw e.message;
+      }
+
+      throw new Error('Something went wrong');
+    }
+  }
+
+  async like(clubId: number) {
+    try {
+      if (clubId <= 0) {
+        const customError = new CustomError(404, 'not Found Club Data');
+        throw customError;
+      }
+
+      const { data } = await axios.post<IClub>(
+        `/moamoa/club/like/${clubId}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+        }
+      );
 
       return data;
     } catch (e: AxiosError | CustomError | unknown) {
