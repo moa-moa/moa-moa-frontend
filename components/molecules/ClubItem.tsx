@@ -23,7 +23,7 @@ export default function ClubItem({
 
   return (
     <li>
-      <Link href={`/club${id}`}>
+      <Link href={`/clubs/${id}`}>
         <a className='block p-5 bg-light-gray rounded-[0.3125rem]'>
           <section className='flex items-center mb-2'>
             <section className='flex gap-[0.3125rem] mr-2.5'>
