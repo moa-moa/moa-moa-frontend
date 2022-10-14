@@ -10,7 +10,7 @@ import Modal from '../atoms/Modal';
 
 export default function DetailFooter() {
   const userInfo = useRecoilValue(userState)!;
-  const { owner, UserJoinedClub } = useRecoilValue(clubDetailStates)!;
+  const { owner, UserJoinedClub, max } = useRecoilValue(clubDetailStates)!;
   const [open, setOpen] = useState(false);
 
   const { query, push } = useRouter();
@@ -66,6 +66,15 @@ export default function DetailFooter() {
     return !!UserJoinedClub.find(({ User }) => User.id === userInfo.id);
   }, [userInfo, UserJoinedClub]);
 
+  const onJoinClub = useCallback(() => {
+    const current = UserJoinedClub.length;
+    if (current < max) {
+      joinClub.mutate(clubId);
+    } else {
+      addToast('error', '모임이 꽉 찼습니다.');
+    }
+  }, [clubId]);
+
   const onRemoveClub = useCallback(() => {
     removeClub.mutate(clubId);
   }, [clubId]);
@@ -90,7 +99,7 @@ export default function DetailFooter() {
         ) : (
           <button
             className='w-full h-full bg-moa-pink text-white text-[1rem] leading-6 font-normal -tracking-[0.01rem]'
-            onClick={() => joinClub.mutate(clubId)}>
+            onClick={() => onJoinClub()}>
             참여할래요
           </button>
         )}
