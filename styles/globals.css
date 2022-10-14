@@ -79,6 +79,21 @@
   animation: fadeOut 0.5s ease-in-out;
 }
 
+.fade-in {
+  animation: ModalFadeIn 0.5s ease-in-out;
+}
+
+@keyframes ModalFadeIn {
+  from {
+    transform: translate(-50%, calc(-50% + 30px));
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%, -50%);
+    opacity: 1;
+  }
+}
+
 @keyframes fadeIn {
   from {
     transform: translateY(30px);
