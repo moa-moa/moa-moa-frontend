@@ -96,7 +96,7 @@ export default function DetailFooter() {
         )}
       </section>
       <Modal isOpen={open} className='fade-in'>
-        <section className='max-w-[19.375rem] w-screen relative border border-gray'>
+        <section className='max-w-[19.375rem] w-screen relative border border-gray bg-white'>
           <main className='py-12'>
             <p className='text-center font-normal text-[0.9375rem] leading-[1.375rem] -tracking-[0.01rem]'>
               모임을 정말 없애시겠습니까?
