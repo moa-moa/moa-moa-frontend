@@ -71,9 +71,12 @@ class ClubService {
         throw customError;
       }
 
-      const { data } = await axios.get<IClub>(`/moamoa/club/${clubId}`, {
-        headers: { Authorization: `Bearer ${AuthService.accessToken}` }
-      });
+      const { data } = await axios.get<IClub | string>(
+        `/moamoa/club/${clubId}`,
+        {
+          headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+        }
+      );
 
       return data;
     } catch (e: AxiosError | CustomError | unknown) {
