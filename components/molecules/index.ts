@@ -1,13 +1,15 @@
 import ClubItem from './ClubItem';
-import ClubList from './ClubList';
 import Gnb from './Gnb';
 import SelectMaxPeople from './SelectMaxPeople';
 import UploadPhotos from './UploadPhotos';
+import DetailHeader from './DetailHeader';
+import DetailFooter from './DetailFooter';
 
 export default {
-  ClubList,
   ClubItem,
   Gnb,
   SelectMaxPeople,
-  UploadPhotos
+  UploadPhotos,
+  DetailHeader,
+  DetailFooter
 };

@@ -1,4 +1,3 @@
-import { ICategory } from './Category';
 import { IUser } from './User';
 
 export interface IClub {
@@ -9,6 +8,15 @@ export interface IClub {
   isAvailable: boolean;
   max: number;
   categoryId: number;
+  ClubImage?: {
+    Image: {
+      id: string;
+      imagePath: string;
+      type: string;
+    };
+    clubId: number;
+    imageId: string;
+  }[];
   UserLikedClub: {
     User: IUser;
     clubId: number;

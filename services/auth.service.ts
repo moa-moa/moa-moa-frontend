@@ -1,11 +1,8 @@
 import { IToken } from '@/models/interfaces/data/Token';
+import { IUser } from '@/models/interfaces/data/User';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-interface IAuthService {
-  googleLogin: () => Promise<IToken>;
-}
-
-class AuthService implements IAuthService {
+class AuthService {
   private _accessToken: string | null = null;
   private _updatedAtToken: number | null = null;
   private timer: NodeJS.Timeout | undefined = undefined;
@@ -41,14 +38,19 @@ class AuthService implements IAuthService {
     }
   }
 
-  async googleLogin(): Promise<IToken> {
+  async googleLogin(): Promise<{ tokenInfo: IToken; userInfo: IUser }> {
     try {
       const { data } = await axios.get<IToken>('/moamoa/auth/auto-login');
-      return data;
+      const { data: user } = await axios.get<IUser>('/moamoa/user', {
+        headers: { Authorization: 'Bearer ' + data.accessToken }
+      });
+
+      return {
+        tokenInfo: data,
+        userInfo: user
+      };
     } catch (e: Error | AxiosError | unknown) {
       if (axios.isAxiosError(e)) {
-        console.log('axious error');
-        console.log(e);
         throw {
           status: e.response?.status,
           message: e.message

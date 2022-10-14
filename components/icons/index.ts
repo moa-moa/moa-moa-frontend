@@ -21,6 +21,10 @@ import Google from './Google';
 import ToastInfo from './ToastInfo';
 import ToastConfirm from './ToastConfirm';
 import ToastClose from './ToastClose';
+import Back from './Back';
+import LikeOn from './LikeOn';
+import LikeOff from './LikeOff';
+import CircleCrown from './CircleCrown';
 
 export default {
   Logo,
@@ -45,5 +49,9 @@ export default {
   Google,
   ToastInfo,
   ToastConfirm,
-  ToastClose
+  ToastClose,
+  Back,
+  LikeOn,
+  LikeOff,
+  CircleCrown
 };
