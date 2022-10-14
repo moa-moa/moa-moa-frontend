@@ -108,7 +108,7 @@ export default function ClubForm({ isModal }: Props) {
         categoryId: data.category,
         title: data.title,
         description: data.description,
-        max: data.max,
+        max: data.max === Infinity ? 300 : data.max,
         imageIds: data.images.map((image) => image.id)
       };
       createClub.mutate(body);

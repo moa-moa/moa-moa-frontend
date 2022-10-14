@@ -40,7 +40,7 @@ export default function ClubDetail() {
             <div className='flex items-center'>
               <Icons.People />
               <span className='text-[0.8125rem] leading-[0.9375rem] font-normal -tracking-[0.01rem] text-gray'>
-                {joined.length} / {max || '∞'}
+                {joined.length} / {max < 300 ? max : '∞'}
               </span>
             </div>
           </header>
