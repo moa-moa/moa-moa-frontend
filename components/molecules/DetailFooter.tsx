@@ -2,7 +2,7 @@ import useToasts from '@/hooks/useToasts';
 import ClubService from '@/services/club.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { clubDetailStates } from 'store/clubDetail';
 import { userState } from 'store/user';
@@ -13,7 +13,7 @@ export default function DetailFooter() {
   const { owner, UserJoinedClub } = useRecoilValue(clubDetailStates)!;
   const [open, setOpen] = useState(false);
 
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const clubId = query?.id ? Number(query?.id) : -1;
   const queryClient = useQueryClient();
   const { addToast } = useToasts();
@@ -44,6 +44,19 @@ export default function DetailFooter() {
       addToast('error', '[에러] 모임 탈퇴에 실패하였습니다.');
     }
   });
+  const removeClub = useMutation(ClubService.remove, {
+    cacheTime: 0,
+    retry: false,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['clubList']);
+      queryClient.invalidateQueries(['categories']);
+      addToast('success', '해당 모임을 폭파하였습니다.');
+      push('/');
+    },
+    onError: (error: any) => {
+      addToast('error', '[에러] 모임 폭파에 실패하였습니다.');
+    }
+  });
 
   const isOwner = useMemo(() => {
     return userInfo.id === owner;
@@ -52,6 +65,10 @@ export default function DetailFooter() {
   const isJoined = useMemo(() => {
     return !!UserJoinedClub.find(({ User }) => User.id === userInfo.id);
   }, [userInfo, UserJoinedClub]);
+
+  const onRemoveClub = useCallback(() => {
+    removeClub.mutate(clubId);
+  }, [clubId]);
 
   return (
     <footer className='fixed left-0 bottom-0 w-full h-nav'>
@@ -78,7 +95,7 @@ export default function DetailFooter() {
           </button>
         )}
       </section>
-      <Modal isOpen={open}>
+      <Modal isOpen={open} className='fade-in'>
         <section className='max-w-[19.375rem] w-screen relative border border-gray'>
           <main className='py-12'>
             <p className='text-center font-normal text-[0.9375rem] leading-[1.375rem] -tracking-[0.01rem]'>
@@ -96,7 +113,9 @@ export default function DetailFooter() {
                 </button>
               </li>
               <li className='w-full h-nav'>
-                <button className='w-full h-full'>확인</button>
+                <button className='w-full h-full' onClick={onRemoveClub}>
+                  확인
+                </button>
               </li>
             </ul>
           </footer>

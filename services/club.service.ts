@@ -19,6 +19,31 @@ class ClubService {
     }
   }
 
+  async remove(clubId: number) {
+    try {
+      if (clubId <= 0) {
+        const customError = new CustomError(404, 'not Found Club Data');
+        throw customError;
+      }
+
+      const { data } = await axios.delete(`/moamoa/club/${clubId}`, {
+        headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+      });
+
+      return data;
+    } catch (e: AxiosError | CustomError | unknown) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(e.message);
+      }
+
+      if (e instanceof CustomError) {
+        throw e.message;
+      }
+
+      throw new Error('Something went wrong');
+    }
+  }
+
   async get() {
     try {
       const { data } = await axios.get<IClub[]>(
