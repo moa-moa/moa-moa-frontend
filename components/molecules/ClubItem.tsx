@@ -33,8 +33,13 @@ export default function ClubItem({
 
             <section className='flex-1'>
               <ul className='flex'>
-                {joined.map(({ User, userId }) => (
-                  <li key={userId} className='first:ml-0 -ml-1'>
+                {joined.map(({ User, userId }, index) => (
+                  <li
+                    key={userId}
+                    className='first:ml-0 -ml-1'
+                    style={{
+                      zIndex: joined.length - index
+                    }}>
                     <Atom.Avatar name={User.name} isAvailable={true} />
                   </li>
                 ))}
