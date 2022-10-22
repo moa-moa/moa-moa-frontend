@@ -23,7 +23,7 @@ const EditClub: NextPage = () => {
     return <></>;
   }
 
-  return <section>hello</section>;
+  return <Pages.EditClub />;
 };
 
 export default EditClub;
