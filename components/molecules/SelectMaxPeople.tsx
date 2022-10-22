@@ -3,7 +3,6 @@ import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import { useCallback } from 'react';
 import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import Atoms from '../atoms';
-import Icons from '../icons';
 
 interface Props {
   getValues: UseFormGetValues<ClubFormValues>;
@@ -23,14 +22,16 @@ export default function SelectMaxPeople({ getValues, setValue }: Props) {
     if (newValue > 2) {
       setValue('max', newValue - 1, {
         shouldValidate: true,
-        shouldDirty: true
+        shouldDirty: true,
+        shouldTouch: true
       });
       return;
     }
 
     setValue('max', 2, {
       shouldValidate: true,
-      shouldDirty: true
+      shouldDirty: true,
+      shouldTouch: true
     });
   }, [getValues('max')]);
 
@@ -38,7 +39,8 @@ export default function SelectMaxPeople({ getValues, setValue }: Props) {
     const newValue = isMaxInfinity ? previousMax : getValues('max');
     setValue('max', newValue, {
       shouldValidate: true,
-      shouldDirty: true
+      shouldDirty: true,
+      shouldTouch: true
     });
   }, [getValues('max')]);
 
@@ -46,7 +48,8 @@ export default function SelectMaxPeople({ getValues, setValue }: Props) {
     const newValue = isMaxInfinity ? previousMax : getValues('max');
     setValue('max', newValue + 1, {
       shouldValidate: true,
-      shouldDirty: true
+      shouldDirty: true,
+      shouldTouch: true
     });
   }, [getValues('max')]);
 
