@@ -4,7 +4,7 @@ interface Props {
   title: string;
 }
 
-export default function ModalHeader({ title }: Props) {
+export default function RenewClubHeader({ title }: Props) {
   return (
     <header className='h-header sticky top-0 left-0 bg-white z-10 px-4'>
       <section className='relative max-w-5xl mx-auto w-full h-full'>
