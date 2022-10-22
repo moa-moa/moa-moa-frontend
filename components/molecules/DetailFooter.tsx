@@ -73,7 +73,7 @@ export default function DetailFooter() {
     } else {
       addToast('error', '모임이 꽉 찼습니다.');
     }
-  }, [clubId]);
+  }, [clubId, UserJoinedClub, max]);
 
   const onRemoveClub = useCallback(() => {
     removeClub.mutate(clubId);
