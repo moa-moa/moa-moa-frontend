@@ -25,6 +25,7 @@ import Back from './Back';
 import LikeOn from './LikeOn';
 import LikeOff from './LikeOff';
 import CircleCrown from './CircleCrown';
+import Camera from './Camera';
 
 export default {
   Logo,
@@ -53,5 +54,6 @@ export default {
   Back,
   LikeOn,
   LikeOff,
-  CircleCrown
+  CircleCrown,
+  Camera
 };
