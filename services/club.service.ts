@@ -19,6 +19,20 @@ class ClubService {
     }
   }
 
+  async update({ id, payload }: { id: number; payload: Partial<IClubBody> }) {
+    try {
+      const { data } = await axios.patch<IClub>(`/moamoa/club/${id}`, payload, {
+        headers: { Authorization: `Bearer ${AuthService.accessToken}` }
+      });
+      return data;
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(e.message);
+      }
+      throw new Error('Something went wrong');
+    }
+  }
+
   async remove(clubId: number) {
     try {
       if (clubId <= 0) {

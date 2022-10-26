@@ -1,6 +1,7 @@
 import useToasts from '@/hooks/useToasts';
 import ClubService from '@/services/club.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -65,7 +66,13 @@ export default function DetailHeader() {
         <h1 className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
           {category?.name || ''}
         </h1>
-        {!isOwner && (
+        {isOwner ? (
+          <Link href={`/clubs/${clubId}/edit`}>
+            <a className='absolute top-1/2 -translate-y-1/2 right-4 text-[0.875rem] leading-[1.3125rem] font-normal -tracking-[0.01rem]'>
+              수정
+            </a>
+          </Link>
+        ) : (
           <button
             className='absolute top-1/2 -translate-y-1/2 right-0'
             onClick={onLikeClub}>

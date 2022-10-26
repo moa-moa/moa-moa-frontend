@@ -1,10 +1,10 @@
 import useToasts from '@/hooks/useToasts';
-import { IClubBody } from '@/models/interfaces/data/Club';
+import { IClub, IClubBody } from '@/models/interfaces/data/Club';
 import { ClubFormValues } from '@/models/interfaces/props/ClubFormValues';
 import ClubService from '@/services/club.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { categoryStates } from 'store/categories';
@@ -14,6 +14,7 @@ import Molecules from '../molecules';
 
 interface Props {
   isModal?: boolean;
+  initialValues?: ClubFormValues;
 }
 
 const defaultValues: ClubFormValues = {
@@ -24,8 +25,14 @@ const defaultValues: ClubFormValues = {
   images: []
 };
 
-export default function ClubForm({ isModal }: Props) {
+export default function ClubForm({ isModal, initialValues }: Props) {
   const router = useRouter();
+  const clubId = useMemo(() => {
+    if (router.query.id) {
+      return +router.query.id;
+    }
+    return null;
+  }, [router.query]);
   const queryClient = useQueryClient();
   const categories = useRecoilValue(categoryStates);
   const { addToast } = useToasts();
@@ -44,6 +51,22 @@ export default function ClubForm({ isModal }: Props) {
       console.log(error);
     }
   });
+  const updateClub = useMutation(ClubService.update, {
+    cacheTime: 0,
+    retry: false,
+    onSuccess: () => {
+      // To Do: create Toast Navigation
+      addToast('success', '클럽 수정이 완료되었습니다.');
+      queryClient.invalidateQueries(['clubList']);
+      queryClient.invalidateQueries(['clubDetail']);
+      queryClient.invalidateQueries(['categories']);
+      router.push(`/clubs/${router.query.id}`);
+    },
+    onError: (error) => {
+      console.log(error);
+      addToast('error', '클럽 수정에 실패하였습니다.');
+    }
+  });
 
   const {
     register,
@@ -51,8 +74,9 @@ export default function ClubForm({ isModal }: Props) {
     setValue,
     getValues,
     control,
-    formState: { errors, isValid }
-  } = useForm({ defaultValues });
+    formState,
+    formState: { errors, isValid, dirtyFields }
+  } = useForm({ defaultValues: initialValues || defaultValues });
 
   const inputCategory = register('category', {
     required: true,
@@ -61,6 +85,7 @@ export default function ClubForm({ isModal }: Props) {
         if (categories) {
           return !!categories.find(({ id }) => id === v);
         }
+
         return false;
       }
     }
@@ -69,7 +94,7 @@ export default function ClubForm({ isModal }: Props) {
   const inputTitle = register('title', {
     required: true,
     validate: {
-      empty: (v) => {
+      isValid: (v) => {
         return !!v;
       }
     }
@@ -78,12 +103,16 @@ export default function ClubForm({ isModal }: Props) {
   const inputDescription = register('description', {
     required: true,
     validate: {
-      empty: (v) => {
+      isValid: (v) => {
         return !!v;
       }
     }
   });
-  const inputMax = register('max', { required: true, min: 1, max: Infinity });
+  const inputMax = register('max', {
+    required: true,
+    min: 1,
+    max: Infinity
+  });
 
   const inputImages = register('images', {
     required: false
@@ -102,8 +131,53 @@ export default function ClubForm({ isModal }: Props) {
     }
   });
 
+  const areUploadedNewImages = (
+    imgs: {
+      id?: boolean | undefined;
+      imagePath?: boolean | undefined;
+    }[]
+  ) => imgs.some(({ id, imagePath }) => id && imagePath);
+
   const onSubmit = useCallback(
     (data: ClubFormValues) => {
+      if (clubId && initialValues) {
+        const payload: Partial<IClubBody> = {};
+
+        for (const [key, value] of Object.entries(dirtyFields)) {
+          if (key && value) {
+            /* eslint-disable indent */
+            switch (key) {
+              case 'category':
+                payload['categoryId'] = data.category;
+                break;
+              case 'title':
+                payload['title'] = data.title;
+                break;
+              case 'description':
+                payload['description'] = data.description;
+                break;
+              case 'images':
+                if (Array.isArray(value)) {
+                  if (areUploadedNewImages(value)) {
+                    payload['imageIds'] = data.images.map((image) => image.id);
+                  }
+                }
+                break;
+            }
+          }
+        }
+
+        if (initialValues['max'] !== data.max) {
+          payload['max'] = data.max === Infinity ? 300 : data.max;
+        }
+
+        updateClub.mutate({
+          id: clubId,
+          payload
+        });
+        return;
+      }
+
       const body: IClubBody = {
         categoryId: data.category,
         title: data.title,
@@ -113,8 +187,48 @@ export default function ClubForm({ isModal }: Props) {
       };
       createClub.mutate(body);
     },
-    [isValid]
+    [isValid, dirtyFields, initialValues, formState]
   );
+
+  const isFormValid = useMemo(() => {
+    const { isValid, dirtyFields } = formState;
+
+    if (initialValues) {
+      let result = false;
+
+      for (const [key, value] of Object.entries(dirtyFields)) {
+        if (key === 'images' && Array.isArray(value)) {
+          result = areUploadedNewImages(value);
+        } else {
+          if (key === 'title' && value && !getValues('title')) {
+            result = false;
+          } else {
+            if (key === 'description' && value && !getValues('description')) {
+              result = false;
+            } else {
+              result = !!value;
+            }
+          }
+        }
+
+        if (result) {
+          return true;
+        }
+      }
+
+      // max는 dirtyFields에 기록이 안됨. 라이브러리 버그로 추정
+      const maxValue = getValues('max');
+      if (maxValue === initialValues['max']) {
+        result = false;
+      } else {
+        result = true;
+      }
+
+      return result;
+    }
+
+    return isValid;
+  }, [initialValues, dirtyFields, isValid, formState]);
 
   return (
     <>
@@ -178,12 +292,12 @@ export default function ClubForm({ isModal }: Props) {
           <button
             type='submit'
             className='w-full h-full bg-disabled text-base'
-            disabled={!isValid}
+            disabled={!isFormValid}
             style={{
-              backgroundColor: isValid ? '#ee2554' : '#EEEEEE',
-              color: isValid ? '#fff' : '#AAAAAA'
+              backgroundColor: isFormValid ? '#ee2554' : '#EEEEEE',
+              color: isFormValid ? '#fff' : '#AAAAAA'
             }}>
-            등록
+            {clubId ? '수정' : '등록'}
           </button>
         </section>
       </form>

@@ -1,5 +1,5 @@
 import Header from './Header';
-import ModalHeader from './ModalHeader';
+import RenewClubHeader from './RenewClubHeader';
 import Footer from './Footer';
 import TabCategories from './TabCategories';
 import ClubForm from './ClubForm';
@@ -8,7 +8,7 @@ import ClubList from './ClubList';
 
 export default {
   Header,
-  ModalHeader,
+  RenewClubHeader,
   Footer,
   TabCategories,
   ClubForm,
