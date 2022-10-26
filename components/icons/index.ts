@@ -26,6 +26,10 @@ import LikeOn from './LikeOn';
 import LikeOff from './LikeOff';
 import CircleCrown from './CircleCrown';
 import Camera from './Camera';
+import MyCrown from './MyCrown';
+import Rarrow from './Rarrow';
+import MyJoin from './MyJoin';
+import MyLike from './MyLike';
 
 export default {
   Logo,
@@ -55,5 +59,9 @@ export default {
   LikeOn,
   LikeOff,
   CircleCrown,
-  Camera
+  Camera,
+  MyCrown,
+  Rarrow,
+  MyJoin,
+  MyLike
 };
